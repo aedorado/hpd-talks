@@ -5,7 +5,7 @@
   "scripts": {
     "start": "python3 -m http.server 3000",
     "dev": "python3 -m http.server 3000",
-    "build:data": "python3 build_data.py"
+    "build:data": "python3 scripts/build_data.py"
   },
   "keywords": [
     "hari-parshad-das",

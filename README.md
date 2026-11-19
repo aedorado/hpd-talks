@@ -1,6 +1,6 @@
 # 🪷 HG Hari Parshad Das — Katha Sangraha
 
-A clean, responsive, fast web repository of 540+ discourses, seminars, and lectures by **HG Hari Parshad Das**.
+A clean, responsive, high-performance web repository of discourses, seminars, and lectures by **HG Hari Parshad Das**.
 
 Designed for effortless listening, tracking sadhana progress in your browser via `localStorage`, and deploying instantly to **Vercel** with zero build configuration.
 
@@ -8,21 +8,26 @@ Designed for effortless listening, tracking sadhana progress in your browser via
 
 ## ✨ Features
 
-- **543 Curated Lectures**: Full metadata including Category/Topic (e.g., *Srimad Bhagavatam*, *Bhakti-rasamrita-sindhu*, *Bhagavad Gita*, *Damodara Lila*, *Radha Tattva*, *Padyavali*, *Caitanya Caritamrta*), Channel, and unique catalog ID (`#HPD0001` - `#HPD0543`).
+- **700 Curated Lectures**: Full metadata across 32 comprehensive categories and subcategories (*Caitanya Siksastakam*, *Upadeshamrta*, *Srimad Bhagavatam*, *Bhakti-rasamrita-sindhu*, *Bhagavad Gita*, *Lord Nityananda*, *Sharad Poornima*, etc.), sorted chronologically from earliest (2011) to latest (2026).
+- **2-Level Intelligent Taxonomy**: Filter by major category and subcategory (e.g., specific verses, cantos, seminar parts), with 0 uncategorized or miscellaneous talks.
+- **11-Character YouTube Video ID as Primary Key**:
+  - All tracking, state, DOM identifiers, and data lookups use the permanent, immutable YouTube Video ID (e.g. `GNFJXTpDu_s`).
+  - Progress tracking never breaks when new lectures are added, re-indexed, or re-sorted.
 - **Local Storage Progress Tracking**:
   - One-click **"Mark as Heard ✓"** button on cards and in the player.
-  - Interactive **Sadhana Progress Bar**: Live count (e.g. `12 / 543`) and percentage completion.
-  - **Favorites ★**: Save talks for quick replay.
+  - Interactive **Sadhana Progress Bar**: Live count (e.g. `14 / 543`) and percentage completion.
+  - **Favorites ★**: Star talks for quick replay.
   - **Status Tabs**: Easily filter between *All*, *Unheard*, *Heard ✓*, and *Favorites ★*.
   - **Export & Import Backup**: Download a `.json` backup of your listening progress to transfer between phone, tablet, and computer without losing data.
 - **Instant Search & Deep Filtering**:
-  - Live search across lecture titles, topics, channels, and IDs (with keyboard shortcut `/`).
+  - Real-time search across lecture titles, topics, channels, and YouTube IDs (with keyboard shortcut `/`).
+  - **Alphabetically Sorted (A → Z)**: Channel list and Topic/Series dropdowns are cleanly alphabetized with lecture counts.
   - 1-click **Quick Series Chips** for popular seminar topics.
-  - Dropdown filters for Topic, Channel, and Sorting (Catalog ID, Reverse/Newest, Title A-Z, Topic).
-- **Embedded Player Modal**:
+  - Sort by Catalog ID, Latest/Reverse, or Title (A–Z).
+- **Embedded Player Modal & Deep-Linking**:
   - Watch/listen directly inside the app without ads or distractions.
   - Previous & Next buttons to seamlessly marathon a series.
-  - Direct "Open in YouTube" button if you prefer the YouTube app.
+  - Direct URL deep-linking (e.g. `https://yoursite.vercel.app/#v=GNFJXTpDu_s`) to open specific talks.
 - **"Surprise Me" Random Talk Picker**:
   - Plays a random unheard lecture from your collection for daily inspiration.
 - **Grid & List Views**:
@@ -43,53 +48,76 @@ This repository is a **static web application** that requires **no build step**.
 1. Push this directory to your GitHub account:
    ```bash
    git add .
-   git commit -m "Initial commit of HPD talks repository"
+   git commit -m "HG Hari Parshad Das talks repository"
    git branch -M main
-   git remote add origin https://github.com/<your-username>/hpd-talks.git
    git push -u origin main
    ```
 2. Go to [vercel.com](https://vercel.com) and log in.
 3. Click **"Add New Project"** and select your `hpd-talks` repository.
-4. Leave all settings at their defaults (Framework Preset: *Other*, Root Directory: `./`).
+4. Leave all settings at their defaults:
+   - **Framework Preset**: *Other*
+   - **Root Directory**: `./`
+   - **Build Command**: *None*
+   - **Output Directory**: *None*
 5. Click **"Deploy"**. Your site is live in ~5 seconds!
 
 ### Option B: Deploy via Vercel CLI
 
-If you have Node.js and Vercel CLI installed:
 ```bash
-# Install Vercel CLI globally (if not already installed)
-npm install -g vercel
-
-# Deploy directly from this directory
-vercel
+# Deploy directly from your terminal
+npx vercel
 ```
-
-Follow the prompts (accept default settings) and your site will be deployed immediately with a production URL.
+Follow the interactive prompts (press Enter to accept default settings).
 
 ---
 
 ## 💻 Local Testing & Development
 
-You can run the web app locally using Python's built-in web server:
+No Python server or backend is required. You can test locally using any static runner:
 
 ```bash
-python3 -m http.server 3000
+npx serve .
 ```
-Then open [http://localhost:3000](http://localhost:3000) in your web browser.
-
-You can also double-click `index.html` directly—it includes an offline fallback (`data/lectures-data.js`) that works without any web server.
+Or simply double-click [`index.html`](file:///Users/anuragsharma/code/hpd-talks/index.html) to run directly in your web browser with offline fallback.
 
 ---
 
-## 🔄 Adding New Lectures
+## 🔄 Scraping & Data Pipeline Scripts
 
-Whenever you add new rows to `talks - HPD.csv` or run your scraping script, update the web dataset by running:
+All scraping and dataset tools are organized inside the `scripts/` directory:
 
+### 1. Main Scraper: `scripts/fetch_lectures.py`
+Scrapes all configured channels and playlists incrementally into `data/combined_hpd_lectures.csv`:
 ```bash
-python3 build_data.py
+python3 scripts/fetch_lectures.py
 ```
+- **Automatic Resume & Duplicate Skipping**: Pre-loads existing records from `data/combined_hpd_lectures.csv` on startup. Any video already in the CSV is **skipped immediately** without redundant YouTube API calls.
+- Fetches upload dates, durations, channels, and video links.
+- Sorts chronologically earliest to latest and updates `data/combined_hpd_lectures.csv`.
 
-This updates both `data/lectures.json` and `data/lectures-data.js`.
+### 2. Universal Appender: `scripts/append_playlist.py`
+Quickly scan and append **any** YouTube Playlist or Channel into `data/combined_hpd_lectures.csv`:
+```bash
+python3 scripts/append_playlist.py "<YouTube_Playlist_or_Channel_URL>"
+```
+*Example:*
+```bash
+python3 scripts/append_playlist.py "https://www.youtube.com/playlist?list=PLi0jknRok56lADNPPKotZjiproO8GSK34"
+```
+- Compares every video ID against existing records.
+- Skips videos that already exist in `data/combined_hpd_lectures.csv`.
+- Appends only new lectures with 2-level taxonomy and sorts by date.
+
+### 3. Web Dataset Builder: `scripts/build_data.py`
+Converts `data/combined_hpd_lectures.csv` into the web app's JSON and JS datasets:
+```bash
+python3 scripts/build_data.py
+# Or using npm:
+npm run build:data
+```
+- Outputs `data/lectures.json` and `data/lectures-data.js`.
+- Binds companion resources (e.g. Upadeshamrita Q&A PDF) directly to relevant seminar categories.
+- Uses 11-character YouTube video IDs as primary keys.
 
 ---
 
@@ -97,16 +125,26 @@ This updates both `data/lectures.json` and `data/lectures-data.js`.
 
 ```
 hpd-talks/
-├── index.html            # Main web application
+├── index.html                               # Main responsive web application
 ├── css/
-│   └── style.css         # Responsive styling, themes, animations
+│   └── style.css                            # Styling, dark/light themes, animations
 ├── js/
-│   └── app.js           # Filtering, player, progress, and localStorage
+│   └── app.js                               # App logic, localStorage, filtering, player modal
 ├── data/
-│   ├── lectures.json     # 543 talks dataset in JSON
-│   └── lectures-data.js  # Offline/zero-CORS fallback
-├── build_data.py         # Converter script: talks - HPD.csv -> JSON/JS
-├── talks - HPD.csv       # Source catalog of talks
-├── vercel.json           # Vercel caching, headers, and clean URLs
-└── README.md             # Documentation
+│   ├── combined_hpd_lectures.csv            # 700+ chronological archive with dates & durations
+│   ├── talks - HPD.csv                      # Curated catalog backup
+│   ├── lectures.json                        # Web app JSON dataset (keyed by YT ID)
+│   └── lectures-data.js                     # Offline & local file:// fallback
+├── resources/
+│   └── Answers_HPD_Upadeshamritam_WhatsApp.pdf # 421-page Upadeshamrita Q&A companion PDF
+├── scripts/
+│   ├── build_data.py                        # Web dataset generator
+│   ├── fetch_lectures.py                    # Incremental scraper (skips existing videos)
+│   ├── append_playlist.py                   # Reusable playlist/channel appender
+│   ├── apply_full_taxonomy.py               # 2-level devotional taxonomy processor
+│   └── taxonomy_overrides.py                # Speaker & category manual overrides
+├── vercel.json                              # Vercel caching & routing headers
+├── package.json                             # Project metadata & npm scripts
+├── AGENTS.md                                # Developer & AI agent specifications
+└── README.md                                # Project documentation
 ```

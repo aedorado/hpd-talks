@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Convert 'talks - HPD.csv' into:
-1. data/lectures.json (clean JSON dataset)
+1. data/lectures.json (clean JSON dataset using 11-char YouTube ID as primary key)
 2. data/lectures-data.js (fallback for local file:// testing without CORS)
 """
 import csv
@@ -40,18 +40,22 @@ def main():
 
             title_updated = row.get("title_updated", "").strip()
             if title_updated and " - " in title_updated:
-                code = title_updated.split(" - ")[0].strip()
+                catalog_id = title_updated.split(" - ")[0].strip()
             else:
-                code = f"HPD{i + 1:04d}"
+                catalog_id = f"HPD{i + 1:04d}"
+
+            # Primary key is the permanent 11-char YouTube ID
+            primary_id = yt_id if yt_id else catalog_id
 
             lectures.append(
                 {
-                    "id": code,
+                    "id": primary_id,
+                    "yt_id": yt_id,
+                    "catalog_id": catalog_id,
                     "index": i + 1,
                     "title": title,
                     "channel": channel,
                     "category": category,
-                    "yt_id": yt_id,
                     "url": f"https://www.youtube.com/watch?v={yt_id}"
                     if yt_id
                     else link,
@@ -77,6 +81,7 @@ def main():
         )
 
     print(f"✓ Converted {len(lectures)} lectures successfully!")
+    print(f"  • Primary Key: 11-char YouTube Video ID")
     print(f"  • {JSON_OUTPUT}")
     print(f"  • {JS_OUTPUT}")
 

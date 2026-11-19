@@ -1,0 +1,20 @@
+{
+  "name": "hpd-talks-repository",
+  "version": "1.0.0",
+  "description": "Curated repository of talks by HG Hari Parshad Das with local storage tracking",
+  "scripts": {
+    "start": "python3 -m http.server 3000",
+    "dev": "python3 -m http.server 3000",
+    "build:data": "python3 build_data.py"
+  },
+  "keywords": [
+    "hari-parshad-das",
+    "iskcon",
+    "vaishnava",
+    "lectures",
+    "repository",
+    "vercel"
+  ],
+  "author": "",
+  "license": "MIT"
+}

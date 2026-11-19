@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HG Hari Parshad Das — Katha Sangraha</title>
+  <meta name="description" content="A curated repository of lectures, seminars, and talks by HG Hari Parshad Das. Track listened talks in your browser with local storage.">
+  <meta name="theme-color" content="#d97706">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🪷</text></svg>">
+
+  <!-- Inter Font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Top Announcement / Sadhana Progress Banner -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-symbol">🪷</div>
+        <div class="brand-text">
+          <h1 class="brand-title">Hari Parshad Das Katha Sangraha</h1>
+          <p class="brand-subtitle">Curated Discourses, Seminars &amp; Vaishnava Tattva</p>
+        </div>
+      </div>
+
+      <!-- Header Actions & Progress Summary -->
+      <div class="header-actions">
+        <!-- Progress Counter Pill -->
+        <div class="progress-pill" id="headerProgressWidget" title="Click to view listening stats">
+          <div class="progress-meta">
+            <span class="progress-label">Lectures Heard</span>
+            <span class="progress-fraction" id="heardFraction">0 / 543</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
+          </div>
+          <span class="progress-percent" id="heardPercentage">0%</span>
+        </div>
+
+        <!-- Random Talk Button -->
+        <button class="btn btn-secondary btn-icon-text" id="randomTalkBtn" title="Play a random unheard talk">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="16 3 21 3 21 8"></polyline>
+            <line x1="4" y1="20" x2="21" y2="3"></line>
+            <polyline points="21 16 21 21 16 21"></polyline>
+            <line x1="15" y1="15" x2="21" y2="21"></line>
+            <line x1="4" y1="4" x2="9" y2="9"></line>
+          </svg>
+          <span class="btn-text">Surprise Me</span>
+        </button>
+
+        <!-- Backup/Restore Modal Trigger -->
+        <button class="btn btn-icon" id="openBackupBtn" title="Backup or restore listening history">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+        </button>
+
+        <!-- Theme Toggle -->
+        <button class="btn btn-icon" id="themeToggleBtn" title="Toggle Light / Dark theme">
+          <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+
+    <!-- Search & Filter Controls Section -->
+    <section class="controls-card">
+      <div class="search-row">
+        <!-- Main Search Bar -->
+        <div class="search-input-wrapper">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Search by lecture title, topic, scripture, channel, or ID (e.g. HPD0012)..." 
+            autocomplete="off"
+            spellcheck="false"
+          >
+          <kbd class="search-kbd" title="Press '/' to quickly search">/</kbd>
+          <button class="clear-search-btn" id="clearSearchBtn" title="Clear search">✕</button>
+        </div>
+
+        <!-- View Mode Switch (Grid vs List) -->
+        <div class="view-switch-group">
+          <button class="view-btn active" id="viewGridBtn" title="Grid View">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+          </button>
+          <button class="view-btn" id="viewListBtn" title="Compact List View">
+            <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Tabs (Status) -->
+      <div class="filter-row">
+        <div class="status-tabs" id="statusTabs">
+          <button class="tab-btn active" data-status="all">
+            All <span class="tab-count" id="countAll">0</span>
+          </button>
+          <button class="tab-btn" data-status="unheard">
+            Unheard <span class="tab-count" id="countUnheard">0</span>
+          </button>
+          <button class="tab-btn" data-status="heard">
+            Heard ✓ <span class="tab-count" id="countHeard">0</span>
+          </button>
+          <button class="tab-btn" data-status="starred">
+            Favorites ★ <span class="tab-count" id="countStarred">0</span>
+          </button>
+        </div>
+
+        <div class="select-filters">
+          <!-- Category Filter -->
+          <div class="custom-select-wrap">
+            <label for="categorySelect">Topic / Series:</label>
+            <select id="categorySelect">
+              <option value="all">All Topics (543)</option>
+              <!-- Filled dynamically by JS -->
+            </select>
+          </div>
+
+          <!-- Channel Filter -->
+          <div class="custom-select-wrap">
+            <label for="channelSelect">Channel:</label>
+            <select id="channelSelect">
+              <option value="all">All Channels</option>
+              <!-- Filled dynamically by JS -->
+            </select>
+          </div>
+
+          <!-- Sort Filter -->
+          <div class="custom-select-wrap">
+            <label for="sortSelect">Sort:</label>
+            <select id="sortSelect">
+              <option value="default">Default Catalog (ID)</option>
+              <option value="reverse">Reverse (Latest First)</option>
+              <option value="titleAsc">Title (A → Z)</option>
+              <option value="category">By Topic / Category</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Topic Chips Bar for Instant 1-Click Filtering -->
+      <div class="quick-chips-bar" id="quickChipsBar">
+        <span class="chips-label">Popular Series:</span>
+        <div class="chips-scroll" id="chipsContainer">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Active Filters Summary & Result Stats -->
+    <section class="results-bar">
+      <div class="results-stats">
+        Showing <span id="resultsCount">0</span> talks
+        <span id="activeFilterNote" class="filter-note"></span>
+      </div>
+      <div class="results-actions">
+        <button class="btn btn-ghost btn-sm" id="resetFiltersBtn" style="display: none;">
+          Clear All Filters ✕
+        </button>
+      </div>
+    </section>
+
+    <!-- Lectures Content Grid / List -->
+    <section class="lectures-container grid-view" id="lecturesContainer">
+      <!-- Cards rendered here by JS -->
+    </section>
+
+    <!-- Empty State -->
+    <div class="empty-state" id="emptyState" style="display: none;">
+      <div class="empty-icon">🪷</div>
+      <h3 class="empty-title">No lectures match your filters</h3>
+      <p class="empty-desc">Try clearing your search query or switching the category/status filters.</p>
+      <button class="btn btn-primary" id="emptyResetBtn">Reset All Filters</button>
+    </div>
+
+    <!-- Pagination / Load More Bar -->
+    <div class="pagination-bar" id="paginationBar">
+      <button class="btn btn-secondary btn-lg" id="loadMoreBtn">
+        Load More Lectures (<span id="remainingCount">0</span> remaining)
+      </button>
+      <button class="btn btn-ghost" id="loadAllBtn">Show All at Once</button>
+    </div>
+
+  </main>
+
+  <!-- Sticky Quick Player / Audio-Video Modal -->
+  <div class="player-modal" id="playerModal" aria-hidden="true">
+    <div class="player-overlay" id="playerOverlay"></div>
+    <div class="player-dialog" role="dialog" aria-modal="true">
+      <div class="player-header">
+        <div class="player-title-info">
+          <span class="player-badge" id="modalLectureId">HPD0001</span>
+          <h2 class="player-title" id="modalLectureTitle">Lecture Title</h2>
+          <span class="player-meta-info" id="modalLectureMeta">Category • Channel</span>
+        </div>
+        <button class="player-close-btn" id="modalCloseBtn" title="Close player (Esc)">✕</button>
+      </div>
+
+      <div class="player-frame-container">
+        <iframe 
+          id="ytPlayerIframe" 
+          src="" 
+          title="YouTube video player" 
+          frameborder="0" 
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          allowfullscreen>
+        </iframe>
+      </div>
+
+      <div class="player-footer">
+        <div class="player-actions-left">
+          <button class="btn btn-sm btn-heard-toggle" id="modalHeardBtn">
+            <span class="heard-icon">✓</span>
+            <span class="heard-text">Mark as Heard</span>
+          </button>
+          <button class="btn btn-sm btn-star-toggle" id="modalStarBtn" title="Add to Favorites">
+            <span class="star-icon">★</span>
+            <span class="star-text">Favorite</span>
+          </button>
+        </div>
+
+        <div class="player-actions-right">
+          <button class="btn btn-sm btn-secondary" id="modalPrevBtn" title="Previous Lecture">
+            ← Previous
+          </button>
+          <button class="btn btn-sm btn-secondary" id="modalNextBtn" title="Next Lecture">
+            Next →
+          </button>
+          <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary" id="modalYtDirectLink">
+            Open on YouTube ↗
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Backup / Data Management Modal -->
+  <div class="modal" id="backupModal" aria-hidden="true">
+    <div class="modal-overlay" id="backupOverlay"></div>
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title">Progress &amp; Local Storage</h2>
+        <button class="modal-close-btn" id="closeBackupModalBtn">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-text">
+          Your listening progress is saved locally in this browser. To transfer your progress to your phone or another device, export it as a file:
+        </p>
+
+        <div class="stats-summary-card">
+          <div class="stat-box">
+            <span class="stat-val" id="statTotalHeard">0</span>
+            <span class="stat-lbl">Talks Heard</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="statTotalRemaining">543</span>
+            <span class="stat-lbl">Remaining</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-val" id="statTotalFavorites">0</span>
+            <span class="stat-lbl">Favorites</span>
+          </div>
+        </div>
+
+        <div class="backup-actions">
+          <div class="backup-card">
+            <h4>Export Progress</h4>
+            <p>Download a backup JSON file containing your heard talks and favorites.</p>
+            <button class="btn btn-secondary w-full" id="exportDataBtn">
+              Download Progress Backup (.json)
+            </button>
+          </div>
+
+          <div class="backup-card">
+            <h4>Import Progress</h4>
+            <p>Restore your saved progress from a previously downloaded backup JSON file.</p>
+            <label class="btn btn-secondary w-full file-upload-btn">
+              Choose Backup File
+              <input type="file" id="importFileInput" accept=".json" style="display: none;">
+            </label>
+          </div>
+        </div>
+
+        <div class="danger-zone">
+          <button class="btn btn-danger btn-sm" id="resetProgressBtn">
+            Reset All Heard Talks (Clear Local Storage)
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="appToast" role="alert" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <!-- 1. Offline & Local file fallback dataset -->
+  <script src="data/lectures-data.js"></script>
+  <!-- 2. Application Logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>

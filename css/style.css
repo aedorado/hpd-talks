@@ -880,6 +880,12 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
   flex: 1;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.card-title:hover {
+  color: var(--accent);
 }
 
 .card-title mark {
@@ -1038,6 +1044,12 @@ body {
   text-overflow: ellipsis;
   color: var(--text-main);
   line-height: 1.3;
+  cursor: pointer;
+  transition: color var(--transition-fast);
+}
+
+.list-view .card-title:hover {
+  color: var(--accent);
 }
 
 .list-view .card-meta-line {

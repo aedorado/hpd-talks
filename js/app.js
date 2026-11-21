@@ -914,9 +914,18 @@
     `;
 
     const thumbWrap = card.querySelector('.card-thumb-wrap');
-    thumbWrap.addEventListener('click', () => {
-      openPlayerModal(filteredIndex);
-    });
+    if (thumbWrap) {
+      thumbWrap.addEventListener('click', () => {
+        playLecture(ytId, { showVideo: true });
+      });
+    }
+
+    const cardTitle = card.querySelector('.card-title');
+    if (cardTitle) {
+      cardTitle.addEventListener('click', () => {
+        playLecture(ytId, { showVideo: true });
+      });
+    }
 
     const streamCardBtn = card.querySelector('.btn-stream-card');
     if (streamCardBtn) {
@@ -1576,9 +1585,8 @@
     const hash = window.location.hash;
     if (hash && hash.startsWith('#v=')) {
       const targetYtId = hash.replace('#v=', '').trim();
-      const idx = filteredLectures.findIndex(l => (l.yt_id || l.id) === targetYtId);
-      if (idx !== -1) {
-        setTimeout(() => openPlayerModal(idx), 200);
+      if (lectureMapByYtId.has(targetYtId)) {
+        setTimeout(() => playLecture(targetYtId, { showVideo: true }), 200);
       }
     } else if (hash && hash.startsWith('#s=')) {
       const targetShortId = hash.replace('#s=', '').trim();

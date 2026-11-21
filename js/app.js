@@ -40,6 +40,16 @@
   let shortsSearchQuery = '';
   let activeShortsFilter = 'all'; // 'all', 'unwatched', 'watched'
 
+  // Docked Bottom Player & Video Extension Dock State
+  let activePlayerYtId = null;
+  let activePlayerLecture = null;
+  let isPlayerPlaying = false;
+  let playerCurrentTime = 0;
+  let playerDuration = 0;
+  let playerPlaybackRate = 1.0;
+  let isSeekingPlayer = false;
+  let isVideoExpanded = true;
+
   let activeStatus = 'all'; // 'all', 'unheard', 'heard', 'starred'
   let activeCategory = 'all';
   let activeSubcategory = 'all';
@@ -115,6 +125,39 @@
   const modalYtDirectLink = document.getElementById('modalYtDirectLink');
   const modalResourceLink = document.getElementById('modalResourceLink');
   const modalRestartBtn = document.getElementById('modalRestartBtn');
+
+  // Docked Bottom Player & Video Dock Elements
+  const dockedBottomPlayer = document.getElementById('dockedBottomPlayer');
+  const bpVideoDock = document.getElementById('bpVideoDock');
+  const bpSwitchToAudioBtn = document.getElementById('bpSwitchToAudioBtn');
+  const bpPlayerIframe = document.getElementById('bpPlayerIframe');
+  const bpThumbWrap = document.getElementById('bpThumbWrap');
+  const bpThumbImg = document.getElementById('bpThumbImg');
+  const bpLiveWave = document.getElementById('bpLiveWave');
+  const bpTitle = document.getElementById('bpTitle');
+  const bpSpeaker = document.getElementById('bpSpeaker');
+  const bpCategory = document.getElementById('bpCategory');
+  const bpPrevBtn = document.getElementById('bpPrevBtn');
+  const bpRewind10Btn = document.getElementById('bpRewind10Btn');
+  const bpPlayPauseBtn = document.getElementById('bpPlayPauseBtn');
+  const bpPlayIcon = document.getElementById('bpPlayIcon');
+  const bpForward10Btn = document.getElementById('bpForward10Btn');
+  const bpNextBtn = document.getElementById('bpNextBtn');
+  const bpCurrentTime = document.getElementById('bpCurrentTime');
+  const bpProgressSlider = document.getElementById('bpProgressSlider');
+  const bpSliderFill = document.getElementById('bpSliderFill');
+  const bpTotalDuration = document.getElementById('bpTotalDuration');
+  const bpSpeedBtn = document.getElementById('bpSpeedBtn');
+  const bpSpeedLabel = document.getElementById('bpSpeedLabel');
+  const bpHeardBtn = document.getElementById('bpHeardBtn');
+  const bpHeardIcon = document.getElementById('bpHeardIcon');
+  const bpStarBtn = document.getElementById('bpStarBtn');
+  const bpStarIcon = document.getElementById('bpStarIcon');
+  const bpToggleVideoBtn = document.getElementById('bpToggleVideoBtn');
+  const bpToggleVideoLabel = document.getElementById('bpToggleVideoLabel');
+  const bpToggleVideoChevron = document.getElementById('bpToggleVideoChevron');
+  const bpDirectYtLink = document.getElementById('bpDirectYtLink');
+  const bpCloseBtn = document.getElementById('bpCloseBtn');
 
   // Backup Modal Elements
   const openBackupBtn = document.getElementById('openBackupBtn');
@@ -767,6 +810,11 @@
 
     const badgeLabel = lecture.catalog_id || (typeof lecture.index === 'number' ? `HPD${lecture.index.toString().padStart(4, '0')}` : '');
 
+    // Deduplicate speaker and category
+    const isGuestSpeaker = lecture.speaker && lecture.speaker !== 'HG Hari Parshad Das';
+    const showCategory = !isGuestSpeaker || (lecture.category && lecture.category !== lecture.speaker);
+    const showChannel = lecture.channel && lecture.channel !== 'Hari Parshad Das' && lecture.channel !== lecture.speaker;
+
     // Playback progress for this lecture
     const prog = playbackProgressMap.get(ytId);
     const hasProgress = prog && prog.currentTime > 15 && (!prog.duration || prog.currentTime < prog.duration - 25) && !isHeard;
@@ -797,58 +845,40 @@
       </div>
 
       <div class="card-body">
-        <div class="card-tags">
-          ${badgeLabel ? `<span class="badge-catalog" title="Catalog Code: ${badgeLabel}">${badgeLabel}</span>` : ''}
-          ${lecture.speaker && lecture.speaker !== 'HG Hari Parshad Das' ? `
-            <span class="badge-speaker" title="Speaker: ${escapeHtml(lecture.speaker)}">🎙️ ${escapeHtml(lecture.speaker)}</span>
-          ` : ''}
-          <span class="badge-category" title="Topic: ${escapeHtml(lecture.category)}">${escapeHtml(lecture.category)}</span>
-          ${lecture.subcategory ? `<span class="badge-subcategory" title="Sub-Topic: ${escapeHtml(lecture.subcategory)}">${escapeHtml(lecture.subcategory)}</span>` : ''}
-          <span class="badge-channel" title="Channel: ${escapeHtml(lecture.channel)}">${escapeHtml(lecture.channel)}</span>
-        </div>
+        <div class="card-content-col">
+          <h3 class="card-title" title="${escapeHtml(lecture.title)}">${displayTitle}</h3>
 
-        <h3 class="card-title" title="${escapeHtml(lecture.title)}">${displayTitle}</h3>
-
-        <div class="card-meta-bar">
-          ${lecture.upload_date ? `
-            <span class="card-meta-item card-date" title="Uploaded on ${escapeHtml(lecture.upload_date)}">
-              <svg class="icon icon-meta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
-              </svg>
-              <span>${formatDisplayDate(lecture.upload_date)}</span>
-            </span>
-          ` : ''}
-          ${lecture.duration ? `
-            <span class="card-meta-item card-duration" title="Duration: ${escapeHtml(lecture.duration)}">
-              <svg class="icon icon-meta" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
-              <span>${escapeHtml(lecture.duration)}</span>
-            </span>
-          ` : ''}
-        </div>
-
-        ${((lecture.resources && lecture.resources.length > 0) || lecture.category === 'Upadeshamrta (Seminar)') ? `
-          <div class="card-resource-pill">
-            <a href="resources/Answers_HPD_Upadeshamritam_WhatsApp.pdf" target="_blank" rel="noopener noreferrer" class="btn-card-resource" title="Sri Upadeshamrita Q&amp;A PDF (421 Pages) by HG Hari Parshad Das" onclick="event.stopPropagation()">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              <span>Companion Q&amp;A PDF (421p)</span>
-            </a>
+          <div class="card-meta-line">
+            ${badgeLabel ? `<span class="badge-catalog" title="Catalog: ${badgeLabel}">${badgeLabel}</span>` : ''}
+            ${isGuestSpeaker ? `<span class="badge-speaker" title="Speaker: ${escapeHtml(lecture.speaker)}">🎙️ ${escapeHtml(lecture.speaker)}</span>` : ''}
+            ${showCategory ? `<span class="badge-category" title="Topic: ${escapeHtml(lecture.category)}">${escapeHtml(lecture.category)}</span>` : ''}
+            ${lecture.subcategory ? `<span class="badge-subcategory" title="Sub-Topic: ${escapeHtml(lecture.subcategory)}">${escapeHtml(lecture.subcategory)}</span>` : ''}
+            ${lecture.upload_date ? `
+              <span class="card-meta-item card-date" title="Uploaded on ${escapeHtml(lecture.upload_date)}">
+                <span>📅 ${formatDisplayDate(lecture.upload_date)}</span>
+              </span>
+            ` : ''}
+            ${lecture.duration ? `
+              <span class="card-meta-item card-duration" title="Duration: ${escapeHtml(lecture.duration)}">
+                <span>⏱️ ${escapeHtml(lecture.duration)}</span>
+              </span>
+            ` : ''}
+            ${showChannel ? `
+              <span class="card-meta-item card-channel" title="Channel: ${escapeHtml(lecture.channel)}">
+                <span>${escapeHtml(lecture.channel)}</span>
+              </span>
+            ` : ''}
           </div>
-        ` : ''}
 
-        ${((lecture.resources && lecture.resources.length > 0) || lecture.category === 'Upadeshamrta (Seminar)') ? `
-          <div class="card-resource-pill">
-            <a href="resources/Answers_HPD_Upadeshamritam_WhatsApp.pdf" target="_blank" rel="noopener noreferrer" class="btn-card-resource" title="Sri Upadeshamrita Q&amp;A PDF (421 Pages) by HG Hari Parshad Das" onclick="event.stopPropagation()">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-              <span>Companion Q&amp;A PDF (421p)</span>
-            </a>
-          </div>
-        ` : ''}
+          ${((lecture.resources && lecture.resources.length > 0) || lecture.category === 'Upadeshamrta (Seminar)') ? `
+            <div class="card-resource-pill">
+              <a href="resources/Answers_HPD_Upadeshamritam_WhatsApp.pdf" target="_blank" rel="noopener noreferrer" class="btn-card-resource" title="Sri Upadeshamrita Q&amp;A PDF (421 Pages) by HG Hari Parshad Das" onclick="event.stopPropagation()">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                <span>Companion Q&amp;A PDF (421p)</span>
+              </a>
+            </div>
+          ` : ''}
+        </div>
 
         <div class="card-actions">
           <button class="btn-toggle-heard" data-yt-id="${ytId}">
@@ -857,6 +887,9 @@
           </button>
 
           <div class="card-sub-actions">
+            <button class="btn-sub-action btn-stream-card" data-yt-id="${ytId}" title="Stream Audio in Bottom Player (🎧)">
+              <span style="font-size: 13px;">🎧</span>
+            </button>
             <button class="btn-sub-action btn-star ${isStarred ? 'active' : ''}" data-yt-id="${ytId}" title="${isStarred ? 'Remove from favorites' : 'Add to favorites'}">
               <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
@@ -884,6 +917,16 @@
     thumbWrap.addEventListener('click', () => {
       openPlayerModal(filteredIndex);
     });
+
+    const streamCardBtn = card.querySelector('.btn-stream-card');
+    if (streamCardBtn) {
+      streamCardBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const prog = playbackProgressMap.get(ytId);
+        const startTime = (prog && prog.currentTime > 2) ? prog.currentTime : 0;
+        startAudioStream(ytId, startTime);
+      });
+    }
 
     const toggleHeardBtn = card.querySelector('.btn-toggle-heard');
     toggleHeardBtn.addEventListener('click', (e) => {
@@ -1122,9 +1165,13 @@
             <span>▶</span>
             <span>${hasProgress ? `Resume from ${progTimeStr}` : 'Resume Lecture'}</span>
           </button>
+          <button class="btn-stream-audio" id="btnContinueStreamAudio" title="Stream Audio in Bottom Player without opening video modal">
+            <span class="audio-pulse-icon">🎧</span>
+            <span>Stream Audio</span>
+          </button>
           ${hasProgress ? `
             <button class="btn btn-sm btn-ghost" id="btnContinueRestart" title="Start this lecture from 0:00">
-              <span>↺ Start at 0:00</span>
+              <span>↺ 0:00</span>
             </button>
           ` : ''}
           <button class="btn btn-sm ${isHeard ? 'btn-primary' : 'btn-secondary'}" id="btnContinueToggleHeard">
@@ -1153,10 +1200,20 @@
     const thumbWrap = continueHearingContent.querySelector('.continue-thumb-wrap');
     const resumeBtn = continueHearingContent.querySelector('#btnResumeLecture');
     const restartBtn = continueHearingContent.querySelector('#btnContinueRestart');
+    const streamAudioBtn = continueHearingContent.querySelector('#btnContinueStreamAudio');
 
     if (thumbWrap) thumbWrap.addEventListener('click', () => resumeAction());
     if (resumeBtn) resumeBtn.addEventListener('click', () => resumeAction());
     if (restartBtn) restartBtn.addEventListener('click', () => resumeAction(0));
+    if (streamAudioBtn) {
+      streamAudioBtn.addEventListener('click', () => {
+        let startTime = 0;
+        if (prog && prog.currentTime && prog.currentTime > 2) {
+          startTime = prog.currentTime;
+        }
+        startAudioStream(lastYtId, startTime);
+      });
+    }
 
     const toggleHeardBtn = continueHearingContent.querySelector('#btnContinueToggleHeard');
     if (toggleHeardBtn) {
@@ -1226,128 +1283,293 @@
     if (text) text.textContent = `⏱️ Left off at ${formatTime(currentTime)} (${percent}% completed)`;
   }
 
-  function openPlayerModal(filteredIndex, forcedStartTime) {
-    if (filteredIndex < 0 || filteredIndex >= filteredLectures.length) return;
+  // ==========================================================================
+  // Unified Docked Player & Video Extension Dock Controller
+  // ==========================================================================
+  const AUDIO_SPEEDS = [1.0, 1.25, 1.5, 1.75, 2.0];
+
+  function sendIframeCommand(iframeEl, func, args = []) {
+    if (iframeEl && iframeEl.contentWindow) {
+      try {
+        iframeEl.contentWindow.postMessage(JSON.stringify({
+          event: 'command',
+          func: func,
+          args: args
+        }), '*');
+      } catch (e) {}
+    }
+  }
+
+  function setVideoExtensionVisible(show) {
+    isVideoExpanded = !!show;
+    if (dockedBottomPlayer) {
+      if (isVideoExpanded) {
+        dockedBottomPlayer.classList.add('is-video-visible');
+      } else {
+        dockedBottomPlayer.classList.remove('is-video-visible');
+      }
+    }
+    if (bpToggleVideoLabel) {
+      bpToggleVideoLabel.textContent = isVideoExpanded ? 'Hide Video' : 'Show Video';
+    }
+    if (bpToggleVideoChevron) {
+      bpToggleVideoChevron.textContent = isVideoExpanded ? '∨' : '∧';
+    }
+  }
+
+  function toggleVideoExtension() {
+    setVideoExtensionVisible(!isVideoExpanded);
+  }
+
+  function playLecture(lectureOrIndex, { showVideo = true, forcedStartTime = null } = {}) {
+    let lecture = null;
+    let filteredIndex = -1;
+
+    if (typeof lectureOrIndex === 'number') {
+      filteredIndex = lectureOrIndex;
+      if (filteredIndex >= 0 && filteredIndex < filteredLectures.length) {
+        lecture = filteredLectures[filteredIndex];
+      }
+    } else if (typeof lectureOrIndex === 'string') {
+      const ytId = lectureOrIndex;
+      lecture = lectureMapByYtId.get(ytId);
+      filteredIndex = filteredLectures.findIndex(l => (l.yt_id || l.id) === ytId);
+    } else if (lectureOrIndex && typeof lectureOrIndex === 'object') {
+      lecture = lectureOrIndex;
+      const ytId = lecture.yt_id || lecture.id;
+      filteredIndex = filteredLectures.findIndex(l => (l.yt_id || l.id) === ytId);
+    }
+
+    if (!lecture) return;
+    const ytId = lecture.yt_id || lecture.id;
+
+    // If same lecture is already active in player
+    if (activePlayerYtId === ytId && bpPlayerIframe && bpPlayerIframe.src && bpPlayerIframe.src.includes(ytId)) {
+      setVideoExtensionVisible(showVideo);
+      if (!isPlayerPlaying) {
+        resumePlayer();
+      }
+      return;
+    }
 
     currentPlayingIndex = filteredIndex;
-    const lecture = filteredLectures[filteredIndex];
-    const ytId = lecture.yt_id || lecture.id;
+    activePlayerYtId = ytId;
+    activePlayerLecture = lecture;
+
+    // Determine start timestamp
+    let startTime = 0;
+    if (typeof forcedStartTime === 'number') {
+      startTime = Math.max(0, Math.floor(forcedStartTime));
+    } else {
+      const prog = playbackProgressMap.get(ytId);
+      if (prog && prog.currentTime > 5 && (!prog.duration || prog.currentTime < prog.duration - 15)) {
+        startTime = Math.floor(prog.currentTime);
+      }
+    }
+
+    // Convert duration string
+    playerDuration = 0;
+    if (lecture.duration) {
+      const parts = lecture.duration.split(':').map(Number);
+      if (parts.length === 3) {
+        playerDuration = parts[0] * 3600 + parts[1] * 60 + parts[2];
+      } else if (parts.length === 2) {
+        playerDuration = parts[0] * 60 + parts[1];
+      }
+    }
+    playerCurrentTime = startTime;
+
+    // Populate bottom player UI elements
+    if (bpTitle) {
+      bpTitle.textContent = lecture.title;
+      bpTitle.title = lecture.title;
+    }
+    if (bpSpeaker) bpSpeaker.textContent = lecture.speaker || 'HG Hari Parshad Das';
+    if (bpCategory) {
+      const subcat = lecture.subcategory ? ` • ${lecture.subcategory}` : '';
+      bpCategory.textContent = `${lecture.category}${subcat}`;
+    }
+    if (bpThumbImg) {
+      bpThumbImg.src = lecture.thumbnail || `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+      bpThumbImg.alt = lecture.title;
+    }
+    if (bpDirectYtLink) {
+      bpDirectYtLink.href = lecture.url || `https://www.youtube.com/watch?v=${ytId}`;
+    }
+    if (bpCurrentTime) bpCurrentTime.textContent = formatTime(startTime);
+    if (bpTotalDuration) bpTotalDuration.textContent = playerDuration > 0 ? formatTime(playerDuration) : (lecture.duration || '0:00');
+
+    const percent = playerDuration > 0 ? Math.min(100, (startTime / playerDuration) * 100) : 0;
+    if (bpProgressSlider) bpProgressSlider.value = percent;
+    if (bpSliderFill) bpSliderFill.style.width = `${percent}%`;
+
+    updateBottomPlayerButtons();
+
+    // Show docked player
+    if (dockedBottomPlayer) dockedBottomPlayer.style.display = 'block';
+    document.body.classList.add('has-bottom-player');
+
+    setVideoExtensionVisible(showVideo);
+
+    // Load iframe
+    const startParam = startTime > 0 ? `&start=${startTime}` : '';
+    if (bpPlayerIframe) {
+      bpPlayerIframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1&rel=0${startParam}`;
+    }
+
+    isPlayerPlaying = true;
+    if (bpPlayIcon) bpPlayIcon.textContent = '⏸';
+    if (bpPlayPauseBtn) bpPlayPauseBtn.classList.add('playing');
+    if (bpLiveWave) bpLiveWave.classList.add('playing');
 
     try {
       localStorage.setItem(STORAGE_KEYS.LAST_PLAYED, ytId);
       renderContinueHearingSection();
     } catch (e) {}
 
-    modalLectureId.textContent = `${lecture.catalog_id || `#${lecture.index}`} • ${ytId}`;
-    modalLectureTitle.textContent = lecture.title;
-
-    const speakerText = lecture.speaker ? `${lecture.speaker} • ` : '';
-    const subcatText = lecture.subcategory ? ` • ${lecture.subcategory}` : '';
-    modalLectureMeta.textContent = `${speakerText}${lecture.category}${subcatText} • ${lecture.channel}`;
-    modalYtDirectLink.href = lecture.url;
-
-    if (modalResourceLink) {
-      const hasResource = (lecture.resources && lecture.resources.length > 0) || lecture.category === 'Upadeshamrta (Seminar)';
-      if (hasResource) {
-        modalResourceLink.style.display = 'inline-flex';
-        modalResourceLink.href = 'resources/Answers_HPD_Upadeshamritam_WhatsApp.pdf';
-      } else {
-        modalResourceLink.style.display = 'none';
-      }
-    }
-
-    // Determine starting timestamp
-    let startTime = 0;
-    if (typeof forcedStartTime === 'number') {
-      startTime = Math.max(0, Math.floor(forcedStartTime));
-    } else {
-      const prog = playbackProgressMap.get(ytId);
-      if (prog && prog.currentTime > 15 && (!prog.duration || prog.currentTime < prog.duration - 25)) {
-        startTime = Math.floor(prog.currentTime);
-      }
-    }
-
-    const startParam = startTime > 0 ? `&start=${startTime}` : '';
-    ytPlayerIframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1&rel=0${startParam}`;
     history.replaceState(null, '', `#v=${ytId}`);
-
-    if (modalRestartBtn) {
-      if (startTime > 0) {
-        modalRestartBtn.style.display = 'inline-flex';
-        modalRestartBtn.onclick = () => {
-          savePlaybackProgress(ytId, 0, 0);
-          savePlaybackProgressToStorage();
-          openPlayerModal(filteredIndex, 0);
-          showToast('Restarted lecture from 0:00');
-        };
-      } else {
-        modalRestartBtn.style.display = 'none';
-      }
-    }
 
     if (startTime > 0) {
       showToast(`Resumed playback at ${formatTime(startTime)}`);
+    } else {
+      showToast(`Playing: ${lecture.title.substring(0, 32)}...`);
     }
-
-    startTrackingPlayback();
-    updateModalControls();
-
-    playerModal.classList.add('active');
-    playerModal.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
   }
 
-  function updateModalControls() {
-    if (currentPlayingIndex < 0 || currentPlayingIndex >= filteredLectures.length) return;
-    const lecture = filteredLectures[currentPlayingIndex];
-    const ytId = lecture.yt_id || lecture.id;
-
-    const isHeard = heardSet.has(ytId);
-    const isStarred = starredSet.has(ytId);
-
-    if (isHeard) {
-      modalHeardBtn.classList.add('active');
-      modalHeardBtn.querySelector('.heard-text').textContent = 'Heard ✓';
-    } else {
-      modalHeardBtn.classList.remove('active');
-      modalHeardBtn.querySelector('.heard-text').textContent = 'Mark as Heard';
-    }
-
-    if (isStarred) {
-      modalStarBtn.classList.add('active');
-      modalStarBtn.querySelector('.star-text').textContent = 'Favorited ★';
-    } else {
-      modalStarBtn.classList.remove('active');
-      modalStarBtn.querySelector('.star-text').textContent = 'Favorite';
-    }
-
-    modalPrevBtn.disabled = currentPlayingIndex <= 0;
-    modalNextBtn.disabled = currentPlayingIndex >= filteredLectures.length - 1;
+  // Backward-compatible bridge aliases
+  function openPlayerModal(filteredIndex, forcedStartTime) {
+    playLecture(filteredIndex, { showVideo: true, forcedStartTime });
   }
 
-  function closePlayerModal() {
-    stopTrackingPlayback();
-    savePlaybackProgressToStorage();
+  function startAudioStream(ytId, forcedStartTime) {
+    playLecture(ytId, { showVideo: false, forcedStartTime });
+  }
 
-    playerModal.classList.remove('active');
-    playerModal.setAttribute('aria-hidden', 'true');
-    ytPlayerIframe.src = '';
+  function pausePlayer() {
+    if (!activePlayerYtId || !bpPlayerIframe) return;
+    sendIframeCommand(bpPlayerIframe, 'pauseVideo');
+    isPlayerPlaying = false;
+    if (bpPlayIcon) bpPlayIcon.textContent = '▶';
+    if (bpPlayPauseBtn) bpPlayPauseBtn.classList.remove('playing');
+    if (bpLiveWave) bpLiveWave.classList.remove('playing');
+  }
+
+  function resumePlayer() {
+    if (!activePlayerYtId || !bpPlayerIframe) return;
+    sendIframeCommand(bpPlayerIframe, 'playVideo');
+    isPlayerPlaying = true;
+    if (bpPlayIcon) bpPlayIcon.textContent = '⏸';
+    if (bpPlayPauseBtn) bpPlayPauseBtn.classList.add('playing');
+    if (bpLiveWave) bpLiveWave.classList.add('playing');
+  }
+
+  function togglePlayerPlayPause() {
+    if (!activePlayerYtId) {
+      const lastPlayed = localStorage.getItem(STORAGE_KEYS.LAST_PLAYED);
+      if (lastPlayed) {
+        playLecture(lastPlayed, { showVideo: true });
+      }
+      return;
+    }
+    if (isPlayerPlaying) {
+      pausePlayer();
+    } else {
+      resumePlayer();
+    }
+  }
+
+  function seekPlayerTo(targetSeconds) {
+    if (!bpPlayerIframe || !activePlayerYtId) return;
+    targetSeconds = Math.max(0, targetSeconds);
+    if (playerDuration > 0) {
+      targetSeconds = Math.min(playerDuration, targetSeconds);
+    }
+    playerCurrentTime = targetSeconds;
+    sendIframeCommand(bpPlayerIframe, 'seekTo', [targetSeconds, true]);
+    if (bpCurrentTime) bpCurrentTime.textContent = formatTime(targetSeconds);
+    const percent = playerDuration > 0 ? (targetSeconds / playerDuration) * 100 : 0;
+    if (bpProgressSlider) bpProgressSlider.value = percent;
+    if (bpSliderFill) bpSliderFill.style.width = `${percent}%`;
+    savePlaybackProgress(activePlayerYtId, targetSeconds, playerDuration);
+  }
+
+  function stepPlayerSeek(deltaSeconds) {
+    seekPlayerTo(playerCurrentTime + deltaSeconds);
+  }
+
+  function cyclePlayerSpeed() {
+    let nextIdx = (AUDIO_SPEEDS.indexOf(playerPlaybackRate) + 1) % AUDIO_SPEEDS.length;
+    playerPlaybackRate = AUDIO_SPEEDS[nextIdx];
+    sendIframeCommand(bpPlayerIframe, 'setPlaybackRate', [playerPlaybackRate]);
+    if (bpSpeedLabel) bpSpeedLabel.textContent = `${playerPlaybackRate}x`;
+    showToast(`Speed: ${playerPlaybackRate}x`);
+  }
+
+  function closePlayer() {
+    if (bpPlayerIframe) {
+      sendIframeCommand(bpPlayerIframe, 'pauseVideo');
+      bpPlayerIframe.src = '';
+    }
+    isPlayerPlaying = false;
+    activePlayerYtId = null;
+    activePlayerLecture = null;
     currentPlayingIndex = -1;
-    document.body.style.overflow = '';
-    history.replaceState(null, '', window.location.pathname);
+    if (dockedBottomPlayer) dockedBottomPlayer.style.display = 'none';
+    document.body.classList.remove('has-bottom-player');
+    savePlaybackProgressToStorage();
     renderContinueHearingSection();
+    history.replaceState(null, '', window.location.pathname);
   }
 
   function playPreviousLecture() {
     if (currentPlayingIndex > 0) {
-      openPlayerModal(currentPlayingIndex - 1);
+      playLecture(currentPlayingIndex - 1, { showVideo: isVideoExpanded });
     }
   }
 
   function playNextLecture() {
-    if (currentPlayingIndex < filteredLectures.length - 1) {
-      openPlayerModal(currentPlayingIndex + 1);
+    if (currentPlayingIndex >= 0 && currentPlayingIndex < filteredLectures.length - 1) {
+      playLecture(currentPlayingIndex + 1, { showVideo: isVideoExpanded });
     }
+  }
+
+  function closePlayerModal() {
+    closePlayer();
+  }
+
+  function updateModalControls() {}
+
+  function updateBottomPlayerButtons() {
+    if (!activePlayerYtId) return;
+    const isHeard = heardSet.has(activePlayerYtId);
+    const isStarred = starredSet.has(activePlayerYtId);
+
+    if (bpHeardBtn && bpHeardIcon) {
+      if (isHeard) {
+        bpHeardBtn.classList.add('active');
+        bpHeardIcon.textContent = '✓';
+        bpHeardBtn.title = 'Heard (Click to unmark)';
+      } else {
+        bpHeardBtn.classList.remove('active');
+        bpHeardIcon.textContent = '✓';
+        bpHeardBtn.title = 'Mark as Heard';
+      }
+    }
+
+    if (bpStarBtn && bpStarIcon) {
+      if (isStarred) {
+        bpStarBtn.classList.add('active');
+        bpStarIcon.textContent = '★';
+        bpStarIcon.title = 'Favorited (Click to remove)';
+      } else {
+        bpStarBtn.classList.remove('active');
+        bpStarIcon.textContent = '★';
+        bpStarIcon.title = 'Add to Favorites';
+      }
+    }
+
+    if (bpPrevBtn) bpPrevBtn.disabled = currentPlayingIndex <= 0;
+    if (bpNextBtn) bpNextBtn.disabled = currentPlayingIndex < 0 || currentPlayingIndex >= filteredLectures.length - 1;
   }
 
   function checkUrlHashForLecture() {
@@ -1815,12 +2037,14 @@
       } else if (e.key === 'Escape') {
         if (shortsPlayerModal && shortsPlayerModal.classList.contains('active')) {
           closeShortPlayer();
-        } else if (playerModal.classList.contains('active')) {
-          closePlayerModal();
         } else if (backupModal.classList.contains('active')) {
           closeBackupModal();
         } else if (resourcesModal && resourcesModal.classList.contains('active')) {
           closeResourcesModal();
+        } else if (activePlayerYtId && isVideoExpanded) {
+          setVideoExtensionVisible(false);
+        } else if (activePlayerYtId) {
+          closePlayer();
         }
       } else if (shortsPlayerModal && shortsPlayerModal.classList.contains('active')) {
         if (e.key === 'ArrowUp' || e.key === 'ArrowLeft') {
@@ -1829,6 +2053,20 @@
         } else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') {
           e.preventDefault();
           playNextShort();
+        }
+      } else if (activePlayerYtId && (!shortsPlayerModal || !shortsPlayerModal.classList.contains('active'))) {
+        const isInput = ['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement?.tagName);
+        if (!isInput) {
+          if (e.key === ' ' || e.code === 'Space') {
+            e.preventDefault();
+            togglePlayerPlayPause();
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            stepPlayerSeek(-10);
+          } else if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            stepPlayerSeek(10);
+          }
         }
       }
     });
@@ -1896,6 +2134,65 @@
     playerOverlay.addEventListener('click', closePlayerModal);
     modalPrevBtn.addEventListener('click', playPreviousLecture);
     modalNextBtn.addEventListener('click', playNextLecture);
+
+    // Docked Bottom Player & Video Extension Dock Events
+    if (bpPlayPauseBtn) bpPlayPauseBtn.addEventListener('click', togglePlayerPlayPause);
+    if (bpRewind10Btn) bpRewind10Btn.addEventListener('click', () => stepPlayerSeek(-10));
+    if (bpForward10Btn) bpForward10Btn.addEventListener('click', () => stepPlayerSeek(10));
+    if (bpPrevBtn) bpPrevBtn.addEventListener('click', playPreviousLecture);
+    if (bpNextBtn) bpNextBtn.addEventListener('click', playNextLecture);
+    if (bpSpeedBtn) bpSpeedBtn.addEventListener('click', cyclePlayerSpeed);
+    if (bpSwitchToAudioBtn) bpSwitchToAudioBtn.addEventListener('click', () => setVideoExtensionVisible(false));
+    if (bpToggleVideoBtn) bpToggleVideoBtn.addEventListener('click', toggleVideoExtension);
+    if (bpThumbWrap) bpThumbWrap.addEventListener('click', toggleVideoExtension);
+    if (bpCloseBtn) bpCloseBtn.addEventListener('click', closePlayer);
+
+    if (bpHeardBtn) {
+      bpHeardBtn.addEventListener('click', () => {
+        if (activePlayerYtId) {
+          toggleHeardStatus(activePlayerYtId);
+          updateBottomPlayerButtons();
+        }
+      });
+    }
+
+    if (bpStarBtn) {
+      bpStarBtn.addEventListener('click', () => {
+        if (activePlayerYtId) {
+          toggleStarStatus(activePlayerYtId);
+          updateBottomPlayerButtons();
+        }
+      });
+    }
+
+    if (bpProgressSlider) {
+      bpProgressSlider.addEventListener('input', (e) => {
+        isSeekingPlayer = true;
+        const val = parseFloat(e.target.value);
+        if (bpSliderFill) bpSliderFill.style.width = `${val}%`;
+        if (playerDuration > 0 && bpCurrentTime) {
+          const previewSec = (val / 100) * playerDuration;
+          bpCurrentTime.textContent = formatTime(previewSec);
+        }
+      });
+
+      bpProgressSlider.addEventListener('change', (e) => {
+        const val = parseFloat(e.target.value);
+        if (playerDuration > 0) {
+          const targetSec = (val / 100) * playerDuration;
+          seekPlayerTo(targetSec);
+        }
+        isSeekingPlayer = false;
+      });
+    }
+
+    if (bpPlayerIframe) {
+      bpPlayerIframe.addEventListener('load', () => {
+        try {
+          bpPlayerIframe.contentWindow.postMessage('{"event":"listening"}', '*');
+        } catch (e) {}
+      });
+    }
 
     modalHeardBtn.addEventListener('click', () => {
       if (currentPlayingIndex >= 0) {
@@ -2046,6 +2343,7 @@
       }
 
       if (data && data.event === 'infoDelivery' && data.info) {
+        // 1. Video Player Modal Progress
         if (currentPlayingIndex >= 0 && currentPlayingIndex < filteredLectures.length) {
           const l = filteredLectures[currentPlayingIndex];
           const ytId = l.yt_id || l.id;
@@ -2060,6 +2358,47 @@
             if (!heardSet.has(ytId)) {
               toggleHeardStatus(ytId);
               showToast('Lecture completed! Marked as Heard ✓');
+            }
+          }
+        }
+
+        // 2. Docked Bottom Player & Video Extension Dock Progress
+        if (activePlayerYtId && data.info.currentTime !== undefined) {
+          const curr = data.info.currentTime;
+          const dur = data.info.duration || playerDuration;
+
+          if (typeof curr === 'number' && curr >= 0) {
+            playerCurrentTime = curr;
+            if (dur && dur > 0) playerDuration = dur;
+
+            if (!isSeekingPlayer) {
+              if (bpCurrentTime) bpCurrentTime.textContent = formatTime(curr);
+              if (playerDuration > 0) {
+                if (bpTotalDuration) bpTotalDuration.textContent = formatTime(playerDuration);
+                const pct = Math.min(100, (curr / playerDuration) * 100);
+                if (bpProgressSlider) bpProgressSlider.value = pct;
+                if (bpSliderFill) bpSliderFill.style.width = `${pct}%`;
+              }
+            }
+
+            savePlaybackProgress(activePlayerYtId, curr, dur);
+          }
+
+          if (data.info.playerState === 1) { // Playing
+            isPlayerPlaying = true;
+            if (bpPlayIcon) bpPlayIcon.textContent = '⏸';
+            if (bpPlayPauseBtn) bpPlayPauseBtn.classList.add('playing');
+            if (bpLiveWave) bpLiveWave.classList.add('playing');
+          } else if (data.info.playerState === 2) { // Paused
+            isPlayerPlaying = false;
+            if (bpPlayIcon) bpPlayIcon.textContent = '▶';
+            if (bpPlayPauseBtn) bpPlayPauseBtn.classList.remove('playing');
+            if (bpLiveWave) bpLiveWave.classList.remove('playing');
+          } else if (data.info.playerState === 0) { // Ended
+            if (!heardSet.has(activePlayerYtId)) {
+              toggleHeardStatus(activePlayerYtId);
+              showToast('Lecture completed! Marked as Heard ✓');
+              updateBottomPlayerButtons();
             }
           }
         }

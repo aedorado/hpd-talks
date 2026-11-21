@@ -10,7 +10,8 @@ Contains curated overrides for:
 
 # Video IDs to completely exclude from the repository (e.g. non-HPD lectures scraped accidentally)
 IGNORED_VIDEO_IDS = {
-    "PACVakvdHxI",  # Srila Prabhupada lecture accidentally scraped from Bhakti Sanga Japa playlist
+    "-uabMD0KaUc",  # HPD0029: Personal family clip (~ Hari forces Papa to chant Harinam ~)
+    "-uabMD0KaUc",  # HPD0029: Personal family clip (~ Hari forces Papa to chant Harinam ~)
 }
 
 # YouTube Video ID -> Speaker Name
@@ -207,6 +208,14 @@ CATEGORY_OVERRIDES = {
     "TSTMvm5ywX0": (
         "Japa, Kirtan & Harinama",
         "Kirtan Sessions & Harinama Sankirtana",
+    ),
+    "QmWckGFU0MY": (
+        "Practical Bhakti & Sadhana",
+        "Universality of Bhakti",
+    ),
+    "T0CQhwWQfng": (
+        "Festivals & Temple Seva",
+        "Bhishma Panchak Vishesh Katha (Nashik)",
     ),
     "Im1LBGiKx5g": (
         "Q&A, Podcasts & Interviews",

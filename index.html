@@ -42,7 +42,7 @@
         <div class="progress-pill" id="headerProgressWidget" title="Click to view listening stats">
           <div class="progress-meta">
             <span class="progress-label">Lectures Heard</span>
-            <span class="progress-fraction" id="heardFraction">0 / 701</span>
+            <span class="progress-fraction" id="heardFraction">0 / 702</span>
           </div>
           <div class="progress-bar-wrap">
             <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
@@ -108,12 +108,12 @@
     <div class="mode-nav-container">
       <button class="nav-mode-btn active" id="tabKathasBtn" data-mode="kathas" title="View Full Lectures Archive">
         <span class="nav-mode-icon">🎙️</span>
-        <span class="nav-mode-text">Full Kathas</span>
-        <span class="nav-mode-count" id="navKathasCount">701</span>
+        <span class="nav-mode-text">Kathas</span>
+        <span class="nav-mode-count" id="navKathasCount">702</span>
       </button>
       <button class="nav-mode-btn" id="tabShortsBtn" data-mode="shorts" title="View Upadesh Shorts Archive">
         <span class="nav-mode-icon">⚡</span>
-        <span class="nav-mode-text">Upadesh Shorts</span>
+        <span class="nav-mode-text">Shorts</span>
         <span class="nav-mode-count" id="navShortsCount">16</span>
       </button>
     </div>
@@ -337,7 +337,7 @@
         </div>
 
         <div class="shorts-hero-content">
-          <h2 class="shorts-hero-title">Upadesh Shorts Archive</h2>
+          <h2 class="shorts-hero-title">Shorts Archive</h2>
           <p class="shorts-hero-desc">
             Bite-sized spiritual wisdom, verse commentaries, and essential Krishna consciousness insights by HG Hari
             Parshad Das — preserved in distraction-free vertical cards.
@@ -588,12 +588,112 @@
           </button>
           <a href="#" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-primary"
             id="shortsModalDirectLink">
-            Open in Shorts ↗
+            Open in Youtube ↗
           </a>
         </div>
       </div>
     </div>
   </div>
+
+  <!-- Docked Bottom Player Bar with Expandable Video Dock -->
+  <aside class="docked-bottom-player is-video-visible" id="dockedBottomPlayer" aria-label="Katha Player" style="display: none;">
+    <!-- Centered Expandable Video Dock attached directly above bottom player bar -->
+    <div class="bp-video-dock" id="bpVideoDock">
+      <div class="bp-video-header">
+        <div class="bp-video-header-left">
+          <span class="bp-video-badge">📹 Video Mode</span>
+        </div>
+        <button class="bp-switch-audio-btn" id="bpSwitchToAudioBtn" type="button" title="Switch to Audio Only">
+          <span>Switch to Audio Only</span>
+          <span class="bp-chevron">∨</span>
+        </button>
+      </div>
+      <div class="bp-video-frame-container">
+        <iframe id="bpPlayerIframe" src="" title="Katha Player" frameborder="0"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+      </div>
+    </div>
+
+    <div class="bottom-player-container">
+      <!-- Left: Track Metadata & Live Status -->
+      <div class="bp-track-info">
+        <div class="bp-thumb-wrap" id="bpThumbWrap" title="Click to show/hide video">
+          <img class="bp-thumb-img" id="bpThumbImg" src="" alt="Lecture Thumbnail">
+          <div class="bp-thumb-overlay">
+            <span class="bp-expand-icon">📹</span>
+          </div>
+          <div class="bp-live-wave" id="bpLiveWave">
+            <span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="bp-meta-text">
+          <div class="bp-title-wrap">
+            <h4 class="bp-title" id="bpTitle">Lecture Title</h4>
+          </div>
+          <div class="bp-sub-meta">
+            <span class="bp-speaker" id="bpSpeaker">HG Hari Parshad Das</span>
+            <span class="bp-dot">•</span>
+            <span class="bp-category" id="bpCategory">Category</span>
+          </div>
+          <div class="bp-stream-badge">
+            <span class="bp-stream-dot"></span>
+            <span class="bp-stream-text">YouTube Audio Stream</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Controls & Scrubber -->
+      <div class="bp-center-controls">
+        <div class="bp-btn-row">
+          <button class="bp-ctrl-btn" id="bpPrevBtn" title="Previous Lecture">⏮</button>
+          <button class="bp-ctrl-btn bp-seek-btn" id="bpRewind10Btn" title="Rewind 10s">↺</button>
+          <button class="bp-ctrl-btn bp-play-btn" id="bpPlayPauseBtn" title="Play / Pause">
+            <span class="bp-play-icon" id="bpPlayIcon">▶</span>
+          </button>
+          <button class="bp-ctrl-btn bp-seek-btn" id="bpForward10Btn" title="Forward 10s">↻</button>
+          <button class="bp-ctrl-btn" id="bpNextBtn" title="Next Lecture">⏭</button>
+        </div>
+        <div class="bp-scrubber-row">
+          <span class="bp-time" id="bpCurrentTime">0:00</span>
+          <div class="bp-progress-track" id="bpProgressTrack">
+            <input type="range" class="bp-progress-slider" id="bpProgressSlider" min="0" max="100" value="0" step="0.2"
+              aria-label="Audio scrubber">
+            <div class="bp-slider-fill" id="bpSliderFill"></div>
+          </div>
+          <span class="bp-time bp-time-duration" id="bpTotalDuration">0:00</span>
+        </div>
+      </div>
+
+      <!-- Right: Speed, Mode & Dismiss Actions -->
+      <div class="bp-right-actions">
+        <!-- Speed Selector -->
+        <button class="bp-tool-btn bp-speed-btn" id="bpSpeedBtn" title="Change Playback Speed">
+          <span id="bpSpeedLabel">1.0x</span>
+          <span class="bp-speed-chevron">∨</span>
+        </button>
+        <!-- Mark as Heard -->
+        <button class="bp-tool-btn" id="bpHeardBtn" title="Toggle Heard">
+          <span id="bpHeardIcon">✓</span>
+        </button>
+        <!-- Favorite Star -->
+        <button class="bp-tool-btn" id="bpStarBtn" title="Toggle Favorite">
+          <span id="bpStarIcon">★</span>
+        </button>
+        <!-- Toggle Video Extension (Saffron Pill Button) -->
+        <button class="bp-video-toggle-pill" id="bpToggleVideoBtn" title="Toggle Video Extension">
+          <span class="bp-toggle-icon">📹</span>
+          <span id="bpToggleVideoLabel">Hide Video</span>
+          <span class="bp-toggle-chevron" id="bpToggleVideoChevron">∨</span>
+        </button>
+        <!-- External Direct Link -->
+        <a href="#" target="_blank" rel="noopener noreferrer" class="bp-tool-btn bp-yt-link" id="bpDirectYtLink" title="Watch on YouTube">
+          ↗
+        </a>
+        <!-- Close / Dismiss Player -->
+        <button class="bp-tool-btn bp-close-btn" id="bpCloseBtn" title="Close Player">✕</button>
+      </div>
+    </div>
+  </aside>
 
   <!-- Toast Notification -->
   <div class="toast" id="appToast" role="alert" aria-live="polite"></div>

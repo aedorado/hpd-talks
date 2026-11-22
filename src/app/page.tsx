@@ -323,6 +323,12 @@ export default function Home() {
               onSearchChange={setSearchQuery}
               activeStatus={activeStatus}
               onStatusChange={setActiveStatus}
+              statusCounts={{
+                all: allLectures.length,
+                unheard: Math.max(0, allLectures.length - heardSet.size),
+                heard: heardSet.size,
+                starred: starredSet.size,
+              }}
               activeCategory={activeCategory}
               onCategoryChange={setActiveCategory}
               categories={categories}

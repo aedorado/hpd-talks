@@ -36,6 +36,10 @@ export default function Home() {
   // Content mode: Kathas vs Shorts
   const [contentMode, setContentMode] = useState<ContentMode>('kathas');
 
+  // Shorts filtering & search
+  const [shortsSearchQuery, setShortsSearchQuery] = useState('');
+  const [shortsFilter, setShortsFilter] = useState<'all' | 'unwatched' | 'watched'>('all');
+
   // Modals state
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
   const [isBackupOpen, setIsBackupOpen] = useState(false);
@@ -68,6 +72,28 @@ export default function Home() {
     importData,
     mounted: sadhanaMounted,
   } = useSadhana();
+
+  // Filtered shorts memo
+  const filteredShorts = useMemo(() => {
+    return allShorts.filter((s) => {
+      const ytId = s.yt_id || s.id;
+      const isWatched = shortsWatchedSet.has(ytId);
+
+      // Status filter
+      if (shortsFilter === 'watched' && !isWatched) return false;
+      if (shortsFilter === 'unwatched' && isWatched) return false;
+
+      // Search query filter
+      if (shortsSearchQuery.trim()) {
+        const q = shortsSearchQuery.toLowerCase().trim();
+        const matchesTitle = s.title.toLowerCase().includes(q);
+        const matchesId = (s.catalog_id || '').toLowerCase().includes(q) || ytId.toLowerCase().includes(q);
+        return matchesTitle || matchesId;
+      }
+
+      return true;
+    });
+  }, [allShorts, shortsWatchedSet, shortsFilter, shortsSearchQuery]);
 
   // Theme hook
   const { theme, toggleTheme } = useTheme();
@@ -378,15 +404,23 @@ export default function Home() {
             <ShortsHero
               totalShorts={allShorts.length}
               watchedCount={shortsWatchedSet.size}
+              searchQuery={shortsSearchQuery}
+              onSearchChange={setShortsSearchQuery}
+              activeFilter={shortsFilter}
+              onFilterChange={setShortsFilter}
             />
 
             <ShortsGrid
-              shorts={allShorts}
+              shorts={filteredShorts}
               watchedSet={shortsWatchedSet}
               onOpenPlayer={(short) => setActiveShortModal(short)}
               onToggleWatched={(id) => {
                 const nowWatched = toggleShortWatched(id);
                 showToast(nowWatched ? 'Short marked as Watched ✓' : 'Short unmarked');
+              }}
+              onResetFilters={() => {
+                setShortsSearchQuery('');
+                setShortsFilter('all');
               }}
             />
           </div>

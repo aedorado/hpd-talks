@@ -54,7 +54,7 @@ export const Footer: React.FC<FooterProps> = ({
 
         <div className="footer-bottom">
           <div className="footer-stats">
-            {totalLectures} Kathas • {totalShorts} Upadesh Shorts • Sadhana progress saved locally
+            {totalLectures} Kathas • {totalShorts} Shorts • Sadhana progress saved locally
           </div>
           <div className="footer-tagline">
             Curated with devotion for aspiring practitioners. All glories to Sri Guru and Gauranga.

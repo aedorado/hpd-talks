@@ -37,7 +37,7 @@ export const ModeNav: React.FC<ModeNavProps> = ({
           className={`nav-mode-btn ${activeMode === 'shorts' ? 'active' : ''}`}
           id="tabShortsBtn"
           data-mode="shorts"
-          title="View Upadesh Shorts Archive"
+          title="View Shorts Archive"
           onClick={() => onModeChange('shorts')}
         >
           <span className="nav-mode-icon">⚡</span>

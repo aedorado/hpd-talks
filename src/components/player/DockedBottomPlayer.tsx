@@ -58,10 +58,26 @@ export const DockedBottomPlayer: React.FC<DockedBottomPlayerProps> = ({
   hasNext = false,
   onClose,
 }) => {
+  const [dragPercent, setDragPercent] = React.useState<number | null>(null);
+
   if (!activeLecture) return null;
 
   const ytId = activeLecture.yt_id || activeLecture.id;
   const progressPercent = duration > 0 ? Math.min(100, (currentTime / duration) * 100) : 0;
+  const activePercent = dragPercent !== null ? dragPercent : progressPercent;
+  const activeDisplayTime =
+    dragPercent !== null && duration > 0
+      ? formatTime((dragPercent / 100) * duration)
+      : formatTime(currentTime);
+
+  const commitSeek = (pct: number) => {
+    if (duration > 0) {
+      const targetSec = (pct / 100) * duration;
+      onSeekTo(targetSec);
+    }
+    setDragPercent(null);
+    isSeekingRef.current = false;
+  };
 
   return (
     <aside
@@ -176,7 +192,7 @@ export const DockedBottomPlayer: React.FC<DockedBottomPlayerProps> = ({
 
           <div className="bp-scrubber-row">
             <span className="bp-time" id="bpCurrentTime">
-              {formatTime(currentTime)}
+              {activeDisplayTime}
             </span>
             <div className="bp-progress-track" id="bpProgressTrack">
               <input
@@ -185,7 +201,7 @@ export const DockedBottomPlayer: React.FC<DockedBottomPlayerProps> = ({
                 id="bpProgressSlider"
                 min="0"
                 max="100"
-                value={isNaN(progressPercent) ? 0 : progressPercent}
+                value={isNaN(activePercent) ? 0 : activePercent}
                 step="0.2"
                 aria-label="Audio scrubber"
                 onMouseDown={() => {
@@ -194,24 +210,29 @@ export const DockedBottomPlayer: React.FC<DockedBottomPlayerProps> = ({
                 onTouchStart={() => {
                   isSeekingRef.current = true;
                 }}
-                onMouseUp={() => {
-                  isSeekingRef.current = false;
-                }}
-                onTouchEnd={() => {
-                  isSeekingRef.current = false;
+                onInput={(e: React.FormEvent<HTMLInputElement>) => {
+                  isSeekingRef.current = true;
+                  setDragPercent(parseFloat((e.target as HTMLInputElement).value));
                 }}
                 onChange={(e) => {
-                  const val = parseFloat(e.target.value);
-                  if (duration > 0) {
-                    const targetSec = (val / 100) * duration;
-                    onSeekTo(targetSec);
+                  setDragPercent(parseFloat(e.target.value));
+                }}
+                onMouseUp={(e) => {
+                  commitSeek(parseFloat((e.target as HTMLInputElement).value));
+                }}
+                onTouchEnd={(e) => {
+                  if (dragPercent !== null) {
+                    commitSeek(dragPercent);
                   }
+                }}
+                onKeyUp={(e) => {
+                  commitSeek(parseFloat((e.target as HTMLInputElement).value));
                 }}
               />
               <div
                 className="bp-slider-fill"
                 id="bpSliderFill"
-                style={{ width: `${progressPercent}%` }}
+                style={{ width: `${activePercent}%` }}
               ></div>
             </div>
             <span className="bp-time bp-time-duration" id="bpTotalDuration">

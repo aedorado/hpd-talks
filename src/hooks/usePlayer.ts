@@ -8,9 +8,10 @@ interface UsePlayerProps {
   onProgress?: (ytId: string, currentTime: number, duration: number) => void;
   onLectureEnd?: (ytId: string) => void;
   onPlay?: (ytId: string) => void;
+  getProgress?: (ytId: string) => number;
 }
 
-export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps = {}) {
+export function usePlayer({ onProgress, onLectureEnd, onPlay, getProgress }: UsePlayerProps = {}) {
   const [activeLecture, setActiveLecture] = useState<Lecture | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -26,6 +27,9 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
   const activeLectureRef = useRef<Lecture | null>(activeLecture);
   activeLectureRef.current = activeLecture;
 
+  const isPlayingRef = useRef(isPlaying);
+  isPlayingRef.current = isPlaying;
+
   const currentTimeRef = useRef(currentTime);
   currentTimeRef.current = currentTime;
 
@@ -37,6 +41,12 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
 
   const onLectureEndRef = useRef(onLectureEnd);
   onLectureEndRef.current = onLectureEnd;
+
+  const onPlayRef = useRef(onPlay);
+  onPlayRef.current = onPlay;
+
+  const getProgressRef = useRef(getProgress);
+  getProgressRef.current = getProgress;
 
   // Send command to YouTube iframe via postMessage
   const sendIframeCommand = useCallback((command: string, args: any[] = []) => {
@@ -66,7 +76,8 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
         }
       }
 
-      if (data && (data.event === 'infoDelivery' || data.event === 'initialDelivery') && data.info) {
+      // Only process infoDelivery (not initialDelivery which often resets currentTime to 0)
+      if (data && data.event === 'infoDelivery' && data.info) {
         // 1. Current Time delivery
         if (data.info.currentTime !== undefined && typeof data.info.currentTime === 'number') {
           const curr = data.info.currentTime;
@@ -97,12 +108,15 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
           if (data.info.playerState === 1) {
             // Playing
             setIsPlaying(true);
+            isPlayingRef.current = true;
           } else if (data.info.playerState === 2) {
             // Paused
             setIsPlaying(false);
+            isPlayingRef.current = false;
           } else if (data.info.playerState === 0) {
             // Ended
             setIsPlaying(false);
+            isPlayingRef.current = false;
             if (activeLectureRef.current) {
               onLectureEndRef.current?.(activeLectureRef.current.yt_id || activeLectureRef.current.id);
             }
@@ -112,10 +126,13 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
         const state = typeof data.info === 'number' ? data.info : data.info?.playerState;
         if (state === 1) {
           setIsPlaying(true);
+          isPlayingRef.current = true;
         } else if (state === 2) {
           setIsPlaying(false);
+          isPlayingRef.current = false;
         } else if (state === 0) {
           setIsPlaying(false);
+          isPlayingRef.current = false;
           if (activeLectureRef.current) {
             onLectureEndRef.current?.(activeLectureRef.current.yt_id || activeLectureRef.current.id);
           }
@@ -127,70 +144,25 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
     return () => window.removeEventListener('message', handleMessage);
   }, []);
 
-  // Continuous handshake & time poll from iframe while active
-  useEffect(() => {
-    if (!activeLecture) return;
-
-    const poll = () => {
-      try {
-        iframeRef.current?.contentWindow?.postMessage('{"event":"listening"}', '*');
-      } catch (e) {}
-      sendIframeCommand('getCurrentTime');
-      sendIframeCommand('getDuration');
-    };
-
-    poll();
-    const timer = setInterval(poll, 1000);
-    return () => clearInterval(timer);
-  }, [activeLecture, sendIframeCommand]);
-
-  const play = useCallback(
-    (lecture: Lecture, { showVideo = true, startTime = 0 }: { showVideo?: boolean; startTime?: number } = {}) => {
-      const ytId = lecture.yt_id || lecture.id;
-      setActiveLecture(lecture);
-      activeLectureRef.current = lecture;
-      setIsVideoExpanded(showVideo);
-      setIsPlaying(true);
-      setInitialStartTime(startTime);
-
-      const parsedDur = parseDurationToSeconds(lecture.duration);
-      setDuration(parsedDur);
-      durationRef.current = parsedDur;
-      setCurrentTime(startTime);
-      currentTimeRef.current = startTime;
-
-      onPlay?.(ytId);
-
-      // Attempt immediate handshake
-      try {
-        iframeRef.current?.contentWindow?.postMessage('{"event":"listening"}', '*');
-      } catch (e) {}
-
-      // Update URL hash
-      if (typeof window !== 'undefined') {
-        window.history.replaceState(null, '', `#v=${ytId}`);
-      }
-    },
-    [onPlay]
-  );
-
   const pause = useCallback(() => {
     sendIframeCommand('pauseVideo');
     setIsPlaying(false);
+    isPlayingRef.current = false;
   }, [sendIframeCommand]);
 
   const resume = useCallback(() => {
     sendIframeCommand('playVideo');
     setIsPlaying(true);
+    isPlayingRef.current = true;
   }, [sendIframeCommand]);
 
   const togglePlayPause = useCallback(() => {
-    if (isPlaying) {
+    if (isPlayingRef.current) {
       pause();
     } else {
       resume();
     }
-  }, [isPlaying, pause, resume]);
+  }, [pause, resume]);
 
   const seekTo = useCallback(
     (seconds: number) => {
@@ -217,6 +189,59 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
       seekTo(nextTime);
     },
     [seekTo]
+  );
+
+  const play = useCallback(
+    (
+      lecture: Lecture,
+      { showVideo = true, startTime }: { showVideo?: boolean; startTime?: number } = {}
+    ) => {
+      const ytId = lecture.yt_id || lecture.id;
+      const currentActiveYtId = activeLectureRef.current
+        ? activeLectureRef.current.yt_id || activeLectureRef.current.id
+        : null;
+
+      // If lecture is ALREADY active in player, don't restart or reload the iframe!
+      if (currentActiveYtId === ytId) {
+        setIsVideoExpanded(showVideo);
+        if (typeof startTime === 'number') {
+          seekTo(startTime);
+        }
+        if (!isPlayingRef.current) {
+          resume();
+        }
+        return;
+      }
+
+      // Determine initial start timestamp
+      let effectiveStartTime = 0;
+      if (typeof startTime === 'number') {
+        effectiveStartTime = Math.max(0, Math.floor(startTime));
+      } else {
+        effectiveStartTime = getProgressRef.current?.(ytId) ?? 0;
+      }
+
+      const parsedDur = parseDurationToSeconds(lecture.duration);
+      setActiveLecture(lecture);
+      activeLectureRef.current = lecture;
+      setIsVideoExpanded(showVideo);
+      setIsPlaying(true);
+      isPlayingRef.current = true;
+      setInitialStartTime(effectiveStartTime);
+
+      setDuration(parsedDur);
+      durationRef.current = parsedDur;
+      setCurrentTime(effectiveStartTime);
+      currentTimeRef.current = effectiveStartTime;
+
+      onPlayRef.current?.(ytId);
+
+      // Update URL hash without pushing history state
+      if (typeof window !== 'undefined') {
+        window.history.replaceState(null, '', `#v=${ytId}`);
+      }
+    },
+    [resume, seekTo]
   );
 
   const cyclePlaybackRate = useCallback(() => {

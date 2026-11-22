@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Lecture, ShortItem } from '@/types/lecture';
 import { ContentMode } from '@/types/player';
 
@@ -98,6 +98,23 @@ export default function Home() {
   // Theme hook
   const { theme, toggleTheme } = useTheme();
 
+  // Get playback progress timestamp for a lecture
+  const getProgress = useCallback(
+    (ytId: string): number => {
+      const prog = progressMap[ytId];
+      if (
+        prog &&
+        prog.currentTime > 5 &&
+        (!prog.duration || prog.currentTime < prog.duration - 15) &&
+        !heardSet.has(ytId)
+      ) {
+        return prog.currentTime;
+      }
+      return 0;
+    },
+    [progressMap, heardSet]
+  );
+
   // Player hook
   const {
     activeLecture,
@@ -130,6 +147,7 @@ export default function Home() {
     onPlay: (ytId) => {
       setLastPlayed(ytId);
     },
+    getProgress,
   });
 
   // Filter & Search hook
@@ -199,26 +217,50 @@ export default function Home() {
     showToast(`Surprise discourse: ${randomTalk.title.substring(0, 36)}...`);
   }, [allLectures, play, showToast]);
 
-  // Deep linking URL hash handler (#v= or #s=)
+  // Deep linking URL hash handler (#v= or #s=) - only runs on initial mount
+  const initialHashHandledRef = useRef(false);
+
   useEffect(() => {
     if (!sadhanaMounted || typeof window === 'undefined') return;
+    if (initialHashHandledRef.current) return;
+    initialHashHandledRef.current = true;
 
     const hash = window.location.hash;
     if (hash && hash.startsWith('#v=')) {
       const targetId = hash.replace('#v=', '').trim();
       const targetLecture = allLectures.find((l) => (l.yt_id || l.id) === targetId);
       if (targetLecture) {
-        setTimeout(() => play(targetLecture, { showVideo: true }), 250);
+        setTimeout(() => play(targetLecture, { showVideo: true }), 150);
       }
     } else if (hash && hash.startsWith('#s=')) {
       const targetShortId = hash.replace('#s=', '').trim();
       const targetShort = allShorts.find((s) => (s.yt_id || s.id) === targetShortId);
       if (targetShort) {
         setContentMode('shorts');
-        setTimeout(() => setActiveShortModal(targetShort), 250);
+        setTimeout(() => setActiveShortModal(targetShort), 150);
       }
     }
   }, [sadhanaMounted, allLectures, allShorts, play]);
+
+  // Handle manual browser back/forward URL hash changes
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash;
+      if (hash && hash.startsWith('#v=')) {
+        const targetId = hash.replace('#v=', '').trim();
+        const activeYtId = activeLecture ? activeLecture.yt_id || activeLecture.id : null;
+        if (targetId && targetId !== activeYtId) {
+          const targetLecture = allLectures.find((l) => (l.yt_id || l.id) === targetId);
+          if (targetLecture) {
+            play(targetLecture, { showVideo: true });
+          }
+        }
+      }
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [allLectures, activeLecture, play]);
 
   // Keyboard navigation shortcuts
   useEffect(() => {

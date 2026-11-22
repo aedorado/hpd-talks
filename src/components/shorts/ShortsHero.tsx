@@ -26,7 +26,7 @@ export const ShortsHero: React.FC<ShortsHeroProps> = ({
       <div className="shorts-hero-top">
         <div className="shorts-hero-badge-wrap">
           <span className="shorts-hero-badge">⚡ Quick Nectar</span>
-          <span className="shorts-hero-sub">Vertical Video Upadesh</span>
+          <span className="shorts-hero-sub">Vertical Videos</span>
         </div>
         <div className="shorts-hero-stats">
           <div className="shorts-stat-box">

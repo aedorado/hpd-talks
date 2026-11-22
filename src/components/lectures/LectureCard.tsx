@@ -41,8 +41,8 @@ export const LectureCard: React.FC<LectureCardProps> = ({
   // Playback progress
   const hasProgress =
     progress &&
-    progress.currentTime > 15 &&
-    (!progress.duration || progress.currentTime < progress.duration - 25) &&
+    progress.currentTime > 5 &&
+    (!progress.duration || progress.currentTime < progress.duration - 15) &&
     !isHeard;
   const progressPercent =
     hasProgress && progress.duration

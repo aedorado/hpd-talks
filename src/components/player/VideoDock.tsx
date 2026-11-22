@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo } from 'react';
 
 interface VideoDockProps {
   ytId: string | null;
@@ -10,7 +10,13 @@ interface VideoDockProps {
 }
 
 export const VideoDock: React.FC<VideoDockProps> = ({ ytId, startTime = 0, iframeRef, onSwitchToAudio }) => {
-  const startParam = startTime > 0 ? `&start=${Math.floor(startTime)}` : '';
+  // Reconstruct iframe src when ytId changes, including initial start time
+  const iframeSrc = useMemo(() => {
+    if (!ytId) return '';
+    const startParam = startTime > 0 ? `&start=${Math.floor(startTime)}` : '';
+    return `https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1&rel=0${startParam}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ytId]);
 
   return (
     <div className="bp-video-dock" id="bpVideoDock">
@@ -35,7 +41,7 @@ export const VideoDock: React.FC<VideoDockProps> = ({ ytId, startTime = 0, ifram
           <iframe
             ref={iframeRef as any}
             id="bpPlayerIframe"
-            src={`https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1&rel=0${startParam}`}
+            src={iframeSrc}
             title="Katha Player"
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

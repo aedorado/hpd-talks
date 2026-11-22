@@ -33,8 +33,8 @@ export const ContinueHearing: React.FC<ContinueHearingProps> = ({
   const ytId = lecture.yt_id || lecture.id;
   const hasProgress =
     progress &&
-    progress.currentTime > 15 &&
-    (!progress.duration || progress.currentTime < progress.duration - 25) &&
+    progress.currentTime > 5 &&
+    (!progress.duration || progress.currentTime < progress.duration - 15) &&
     !isHeard;
   const progTimeStr = hasProgress ? formatTime(progress.currentTime) : '';
   const progPercent =

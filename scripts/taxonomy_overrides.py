@@ -48,6 +48,7 @@ SPEAKER_BY_YT_ID = {
     "eM1K70220z0": "HG Hari Parshad Das & HH Sacinandana Swami",
     "m6v1c8L4mrs": "HG Hari Parshad Das & HH Sacinandana Swami",
     "0v5Fw3yWpBs": "HH Sacinandana Swami",
+    "08qo8DpgjLk": "HH Sacinandana Swami",
     "R_K_6_d5r58": "HH Romapada Swami, HH Jayadvaita Swami & HG Hari Parshad Das",
 }
 
@@ -310,6 +311,74 @@ CATEGORY_OVERRIDES = {
         "Q&A, Podcasts & Interviews",
         "ISKCON Vrindavan Podcast",
     ),
+
+    # =========================================================================
+    # Additional Curated Talks (Playlist & Standalone additions)
+    # =========================================================================
+    # Sacinandana Swami talk
+    "08qo8DpgjLk": ("HH Sacinandana Swami", "Goloka Dhama Retreat"),
+
+    # New Q&A, Interviews & Podcasts
+    "-PxUQLbI5uY": ("Q&A, Podcasts & Interviews", "Growing up with Sanskrit (Interview)"),
+    "8ElT4QTUYBg": ("Q&A, Podcasts & Interviews", "Ask a Hare Krishna Series"),
+    "aUZBsMEgCb0": ("Q&A, Podcasts & Interviews", "Ask a Hare Krishna Series"),
+    "pHg1SkdB6J4": ("Q&A, Podcasts & Interviews", "Ask a Hare Krishna Series"),
+    "9wVI8v99hHs": ("Q&A, Podcasts & Interviews", "Ask a Hare Krishna Series"),
+    "bFCxdEsfhtE": ("Q&A, Podcasts & Interviews", "Vaishnava Sanskrit & Culture (Interview)"),
+    "S7T-Z_5xIYE": ("Q&A, Podcasts & Interviews", "Interviews with Chaitanya Charan"),
+
+    # Srimad Bhagavatam Classes
+    "-sqM6Xm0ynw": ("Srimad Bhagavatam", "Canto 07: Prahlada Maharaja & Nrisimhadeva"),
+    "Z86arxL6dJM": ("Srimad Bhagavatam", "Canto 08: Gajendra & Samudra Manthan"),
+    "WPRvqCAk6Ck": ("Srimad Bhagavatam", "Canto 08: Gajendra & Samudra Manthan"),
+    "Sbv3NHwi9Zs": ("Srimad Bhagavatam", "ISKCON Juhu Discourses"),
+    "eDxIOYDxBRQ": ("Srimad Bhagavatam", "ISKCON Juhu Discourses"),
+    "1r4xMrCGcaI": ("Srimad Bhagavatam", "ISKCON NVCC Pune Discourses"),
+    "mPhyQdiAJCI": ("Srimad Bhagavatam", "Canto 10: Vraja Lila & Pastimes"),
+    "iqTlQS1TPBQ": ("Srimad Bhagavatam", "Canto 10: Vraja Lila & Pastimes"),
+    "-L0f-THIpRE": ("Srimad Bhagavatam", "Canto 10: Vraja Lila & Pastimes"),
+    "SjHRFvBD9ZI": ("Srimad Bhagavatam", "Nityam Bhagavata Sevaya"),
+    "HHEHj77fAxU": ("Srimad Bhagavatam", "Canto 02: The Cosmic Manifestation"),
+    "gK9Jp6CedMo": ("Srimad Bhagavatam", "Canto 01: Foundation of Bhakti & Dharma"),
+    "ZG5LAtzBDxE": ("Srimad Bhagavatam", "Paroksa-vada (Indirect Teachings)"),
+
+    # Sri Caitanya Mahaprabhu (Gaura Tattva)
+    "pYxPg29xyTk": ("Sri Caitanya Mahaprabhu (Gaura Tattva)", "Gundicha Marjana & Cleansing the Heart"),
+    "RHIk143MffA": ("Sri Caitanya Mahaprabhu (Gaura Tattva)", "Teachings of Lord Caitanya (Sarvabhauma Bhattacharya)"),
+
+    # Sri Padyavali (Seminar)
+    "VpyHUZ-tPdI": ("Sri Padyavali (Seminar)", "The Joyous Waves of Rupa Goswami's Poetry"),
+    "iDTFnT2Rnhc": ("Sri Padyavali (Seminar)", "Painting Padyavali Pictures"),
+
+    # Damodara Lila
+    "H990OmmdMyI": ("Damodara Lila (Seminar)", "Darsan of Sri Damodara"),
+
+    # Practical Bhakti & Sadhana
+    "y4H4DBpQ5Gs": ("Practical Bhakti & Sadhana", "Temple Worship & Deity Sevā"),
+    "TAU2ondpa0E": ("Practical Bhakti & Sadhana", "Pathways to Perfection (Navadha Bhakti)"),
+    "MOVd6j8BU3U": ("Practical Bhakti & Sadhana", "The Highest Definition of Bhakti"),
+    "C2xzfwjTZ6I": ("Practical Bhakti & Sadhana", "Curing Material Misery through Bhajana"),
+    "4GznPu3-9eA": ("Practical Bhakti & Sadhana", "Curing Material Misery through Bhajana"),
+    "4f_mGcMkgNQ": ("Practical Bhakti & Sadhana", "Living a Life of Devotion"),
+
+    # Japa, Kirtan & Harinama
+    "TakXOtY_ogg": ("Japa, Kirtan & Harinama", "Vaishnava Songs & Prayers"),
+    "jcmlE9iUrVk": ("Japa, Kirtan & Harinama", "Ragas & Kirtan"),
+    "43l3686EsUk": ("Japa, Kirtan & Harinama", "Principles of Attentive Japa (Sanatana Goswami)"),
+    "NmY8StzTS8o": ("Japa, Kirtan & Harinama", "Principles of Attentive Japa (Sanatana Goswami)"),
+    "C4d0cAVKCAM": ("Japa, Kirtan & Harinama", "Principles of Attentive Japa (Sanatana Goswami)"),
+    "PeQtLedAlYU": ("Japa, Kirtan & Harinama", "Principles of Attentive Japa (Sanatana Goswami)"),
+    "KAJfA7cZmxo": ("Japa, Kirtan & Harinama", "Principles of Attentive Japa (Sanatana Goswami)"),
+    "Vu5FABDkmpY": ("Japa, Kirtan & Harinama", "Principles of Attentive Japa (Sanatana Goswami)"),
+
+    # Sri Radha & Sri Guru
+    "R162ICwmwpY": ("Sri Guru & Parampara", "Srila Gour Govinda Maharaja Appreciations"),
+    "j1YwsxwzMGE": ("Srimati Radharani (Radha Tattva)", "Glories, Compassion & Mood of Sri Radha"),
+
+    # Bhagavad Gita Chapter 1 Series
+    "vwn_9Pj3yn0": ("Bhagavad Gita", "Chapter 1: Observing the Armies"),
+    "CNoISVa3tzg": ("Bhagavad Gita", "Chapter 1: Observing the Armies"),
+    "5rFprFoIGxk": ("Bhagavad Gita", "Chapter 1: Observing the Armies"),
 }
 
 
@@ -332,6 +401,8 @@ def get_catalog_id(yt_id: str, index: int, speaker: str) -> str:
         return f"MD{index:04d}"
     if speaker == "Srila Prabhupada":
         return f"SP{index:04d}"
+    if "Sacinandana Swami" in speaker:
+        return f"SNS{index:04d}"
     return f"HPD{index:04d}"
 
 

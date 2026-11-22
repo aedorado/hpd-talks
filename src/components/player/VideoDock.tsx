@@ -40,6 +40,11 @@ export const VideoDock: React.FC<VideoDockProps> = ({ ytId, startTime = 0, ifram
             frameBorder="0"
             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowFullScreen
+            onLoad={() => {
+              try {
+                iframeRef.current?.contentWindow?.postMessage('{"event":"listening"}', '*');
+              } catch (e) {}
+            }}
           />
         ) : null}
       </div>

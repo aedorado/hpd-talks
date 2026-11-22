@@ -194,6 +194,12 @@ export const DockedBottomPlayer: React.FC<DockedBottomPlayerProps> = ({
                 onTouchStart={() => {
                   isSeekingRef.current = true;
                 }}
+                onMouseUp={() => {
+                  isSeekingRef.current = false;
+                }}
+                onTouchEnd={() => {
+                  isSeekingRef.current = false;
+                }}
                 onChange={(e) => {
                   const val = parseFloat(e.target.value);
                   if (duration > 0) {

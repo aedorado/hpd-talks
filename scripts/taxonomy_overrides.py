@@ -12,6 +12,12 @@ Contains curated overrides for:
 IGNORED_VIDEO_IDS = {
     "-uabMD0KaUc",  # HPD0029: Personal family clip (~ Hari forces Papa to chant Harinam ~)
     "08qo8DpgjLk",  # Sacinandana Swami, "Radha's Sidelong Glance of Mercy"
+    "43l3686EsUk",  # 1st Principle of Attentive Japa: Concentration of Mind
+    "NmY8StzTS8o",  # 2nd Principle of Attentive Japa: Cleanliness (Śaucam)
+    "C4d0cAVKCAM",  # 3rd Principle of Attentive Japa: Silence (Maunam)
+    "PeQtLedAlYU",  # 4th Principle of Attentive Japa: Mantra Artha Chintanam
+    "KAJfA7cZmxo",  # 5th Principle of Attentive Japa: Avyagratva (Non-Haste)
+    "Vu5FABDkmpY",  # 6th Principle of Attentive Japa: Nirveda (Non-Dejection)
 }
 
 # YouTube Video ID -> Speaker Name

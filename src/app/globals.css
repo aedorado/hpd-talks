@@ -3086,49 +3086,59 @@ body.has-bottom-player {
   position: relative;
   flex: 1;
   height: 6px;
+  background: rgba(217, 119, 6, 0.15);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 4px;
   display: flex;
   align-items: center;
+  transition: height 0.15s ease, background 0.15s ease;
+}
+
+[data-theme="dark"] .bp-progress-track {
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.bp-progress-track:hover {
+  height: 8px;
+  background: rgba(217, 119, 6, 0.22);
 }
 
 .bp-progress-slider {
   width: 100%;
-  height: 6px;
+  height: 100%;
   -webkit-appearance: none;
   appearance: none;
-  background: var(--bg-input);
-  border-radius: 3px;
+  background: transparent;
+  border-radius: 4px;
   outline: none;
   cursor: pointer;
   margin: 0;
   position: relative;
-  z-index: 2;
-  transition: height 0.15s ease;
-}
-
-.bp-progress-track:hover .bp-progress-slider {
-  height: 8px;
+  z-index: 3;
 }
 
 .bp-progress-slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--accent-gold);
+  border: 2px solid #ffffff;
   cursor: pointer;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
   transition: transform 0.15s ease;
 }
 
 .bp-progress-slider::-moz-range-thumb {
-  width: 13px;
-  height: 13px;
+  width: 14px;
+  height: 14px;
   border-radius: 50%;
   background: var(--accent-gold);
+  border: 2px solid #ffffff;
   cursor: pointer;
-  border: none;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.35);
 }
 
 .bp-progress-slider:hover::-webkit-slider-thumb {
@@ -3141,11 +3151,10 @@ body.has-bottom-player {
   left: 0;
   bottom: 0;
   height: 100%;
-  background: linear-gradient(90deg, var(--primary), var(--accent-gold));
-  border-radius: 3px;
+  background: linear-gradient(90deg, #d97706, #f59e0b);
+  border-radius: 4px;
   pointer-events: none;
-  z-index: 1;
-  width: 0%;
+  z-index: 2;
 }
 
 /* Right: Tool & Dismiss Actions */

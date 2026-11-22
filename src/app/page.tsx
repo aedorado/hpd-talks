@@ -18,6 +18,7 @@ import { usePlayer } from '@/hooks/usePlayer';
 import { Header } from '@/components/layout/Header';
 import { ModeNav } from '@/components/layout/ModeNav';
 import { Toast } from '@/components/layout/Toast';
+import { Footer } from '@/components/layout/Footer';
 import { ContinueHearing } from '@/components/lectures/ContinueHearing';
 import { FilterBar } from '@/components/lectures/FilterBar';
 import { LectureList } from '@/components/lectures/LectureList';
@@ -391,6 +392,14 @@ export default function Home() {
           </div>
         )}
       </main>
+
+      {/* Minimalist Site Footer */}
+      <Footer
+        totalLectures={allLectures.length}
+        totalShorts={allShorts.length}
+        onOpenResources={() => setIsResourcesOpen(true)}
+        onOpenBackup={() => setIsBackupOpen(true)}
+      />
 
       {/* Docked Bottom Player & Expandable Video Dock */}
       <DockedBottomPlayer

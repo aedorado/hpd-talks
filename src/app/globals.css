@@ -3278,3 +3278,110 @@ body.has-bottom-player {
     font-size: 0.82rem;
   }
 }
+
+
+/* ==========================================================================
+   Minimalist App Footer
+   ========================================================================== */
+.app-footer {
+  margin-top: 4rem;
+  border-top: 1px solid var(--border-color);
+  background: var(--bg-card);
+  background: color-mix(in srgb, var(--bg-card) 60%, transparent);
+  padding: 2.25rem 1.25rem 3rem;
+}
+
+.footer-container {
+  max-width: 1360px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.footer-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.footer-symbol {
+  font-size: 1.2rem;
+}
+
+.footer-title {
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--accent-gold);
+  letter-spacing: 0.02em;
+}
+
+.footer-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.footer-link-btn,
+.footer-link {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+  font-family: inherit;
+  transition: color var(--transition-fast);
+}
+
+.footer-link-btn:hover,
+.footer-link:hover {
+  color: var(--text-main);
+}
+
+.footer-scroll-top {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+}
+
+[data-theme="light"] .footer-bottom {
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.footer-tagline {
+  font-style: italic;
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .footer-top,
+  .footer-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.85rem;
+  }
+}

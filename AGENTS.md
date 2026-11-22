@@ -6,11 +6,11 @@ This document provides system specifications, data contracts, and operational gu
 
 ## 1. Project Overview & Architecture
 
-- **Goal**: A fast, elegant, distraction-free lecture repository with browser-based sadhana tracking (`localStorage`), designed for effortless deployment on **Vercel** with **zero build step**.
-- **Tech Stack**: Pure Vanilla HTML5, Modern CSS3 (Variables, Dark/Light Themes, Flex/Grid), and Vanilla JavaScript (ES6+).
-- **Hosting**: Vercel Static CDN (configured via [`vercel.json`](vercel.json)).
-- **Runtime Dependencies**: Zero external npm packages required for serving.
-- **Local Runner**: `npx serve .` or direct file opening (`file:///.../index.html`).
+- **Goal**: A fast, elegant, distraction-free lecture repository with browser-based sadhana tracking (`localStorage`), designed for effortless deployment on **Vercel** with clean, modular component architecture.
+- **Tech Stack**: **Next.js (App Router)**, **React 19**, **TypeScript**, and Modern CSS3 (Variables, Dark/Light Themes, Flex/Grid).
+- **Hosting**: Vercel Native Next.js Platform (configured via [`vercel.json`](vercel.json)).
+- **Build Command**: `npm run build` (outputs optimized static pages via Next.js SSG).
+- **Local Runner**: `npm run dev` (starts Next.js local development server on port 3000).
 
 ---
 
@@ -32,27 +32,62 @@ This document provides system specifications, data contracts, and operational gu
 
 ### 📦 2.2 Dual Data Output Contract
 Whenever updating lecture data for the web app, [`scripts/build_data.py`](scripts/build_data.py) produces two outputs:
-1. `data/lectures.json`: Standard JSON array fetched when served over HTTP/HTTPS.
-2. `data/lectures-data.js`: Assigns `window.LECTURES_DATA = [...]` to allow the web app to run offline or via `file://` protocol without CORS blocking.
+1. `data/lectures.json`: Standard JSON array fetched/imported statically by the Next.js app.
+2. `data/lectures-data.js`: Assigns `window.LECTURES_DATA = [...]` to allow offline testing.
 
 ---
 
-## 3. Directory Structure & Data Schema
+## 3. Directory Structure & Component Architecture
 
 ```
 hpd-talks/
-├── index.html                           # Main responsive web application
-├── css/style.css                        # Styling, themes, animations
-├── js/app.js                            # UI state, filters, modal player, sadhana tracking
+├── src/
+│   ├── app/
+│   │   ├── layout.tsx                   # Root HTML, Google Fonts (Cinzel & Plus Jakarta Sans), metadata
+│   │   ├── page.tsx                     # Main interactive page orchestrating Kathas and Shorts
+│   │   └── globals.css                  # Global styles, dark/light themes, animations
+│   ├── components/
+│   │   ├── layout/
+│   │   │   ├── Header.tsx               # Brand, sadhana counter pill, theme toggle, modal triggers
+│   │   │   ├── ModeNav.tsx              # Kathas vs Shorts mode tab switcher
+│   │   │   └── Toast.tsx                # Non-intrusive action feedback toasts
+│   │   ├── lectures/
+│   │   │   ├── ContinueHearing.tsx      # Resume Sadhana banner for last-played talk
+│   │   │   ├── FilterBar.tsx            # Search bar, 4 dropdowns, sort select, chip strip, view toggle
+│   │   │   ├── LectureList.tsx          # Batch rendering with infinite scroll / load more
+│   │   │   └── LectureCard.tsx          # Card component (Grid & Compact List row layouts)
+│   │   ├── player/
+│   │   │   ├── DockedBottomPlayer.tsx   # Fixed bottom player bar with scrubber and controls
+│   │   │   └── VideoDock.tsx            # Centered expandable video dock above bottom player
+│   │   ├── shorts/
+│   │   │   ├── ShortsHero.tsx           # Hero banner with Upadesh Shorts stats
+│   │   │   ├── ShortsGrid.tsx           # Vertical card grid
+│   │   │   ├── ShortCard.tsx            # Vertical card with watched toggle and player trigger
+│   │   │   └── ShortsPlayerModal.tsx    # Vertical 9:16 player modal
+│   │   └── modals/
+│   │       ├── ResourcesModal.tsx       # 421-page Upadeshamrita Q&A companion PDF modal
+│   │       └── BackupModal.tsx          # Export / Import JSON progress & localStorage manager
+│   ├── hooks/
+│   │   ├── useSadhana.ts                # Central localStorage sadhana tracking hook
+│   │   ├── usePlayer.ts                 # Playback state & YouTube iframe postMessage controller
+│   │   ├── useFilters.ts                # Multi-level filtering, search, and sorting hook
+│   │   └── useTheme.ts                  # Light / Dark theme toggle
+│   ├── types/
+│   │   ├── lecture.ts                   # Lecture, Short, Resource TypeScript interfaces
+│   │   └── player.ts                    # Playback and filter types
+│   └── lib/
+│       ├── constants.ts                 # Storage keys, batch sizes, filter chips
+│       └── formatters.ts                # Time formatting, date formatting, clipboard helpers
+├── public/
+│   └── resources/
+│       └── Answers_HPD_Upadeshamritam_WhatsApp.pdf  # 421-page Upadeshamrita Q&A companion PDF
 ├── data/
-│   ├── combined_hpd_lectures.csv        # Master 700-lecture chronological archive
+│   ├── combined_hpd_lectures.csv        # Master 700+ lecture chronological archive
 │   ├── talks - HPD.csv                  # Curated catalog backup
 │   ├── lectures.json                    # Primary JSON dataset (keyed by YT ID)
 │   ├── lectures-data.js                 # Offline fallback dataset
 │   ├── shorts.json                      # Upadesh Shorts JSON dataset
 │   └── shorts-data.js                   # Upadesh Shorts offline dataset
-├── resources/
-│   └── Answers_HPD_Upadeshamritam_WhatsApp.pdf  # 421-page Upadeshamrita Q&A companion PDF
 ├── scripts/
 │   ├── build_data.py                    # Generates web datasets (JSON & JS)
 │   ├── fetch_lectures.py                # Reusable incremental scraper
@@ -60,22 +95,11 @@ hpd-talks/
 │   ├── append_playlist.py               # Reusable playlist/channel appender
 │   ├── apply_full_taxonomy.py           # 2-level taxonomy processor
 │   └── taxonomy_overrides.py            # Speaker & category manual overrides
-├── vercel.json                          # Vercel CDN caching headers
-└── package.json                         # Project scripts & config
+├── next.config.mjs                      # Next.js configuration
+├── tsconfig.json                        # TypeScript configuration
+├── vercel.json                          # Vercel deployment headers
+└── package.json                         # Project scripts & dependencies
 ```
-
-### `data/combined_hpd_lectures.csv`
-Master chronological archive generated by scraping scripts, sorted from earliest to latest.
-- `Index`: Chronological sequence number (1 = earliest, 2011).
-- `Title`: Video title on YouTube.
-- `Speaker`: Primary speaker (e.g. *HG Hari Parshad Das*, *HH Gour Govinda Swami*, *HG Madhavananda Das*).
-- `Category`: High-level spiritual category (e.g. *Srimad Bhagavatam*, *Caitanya Siksastakam (Seminar)*, *Lord Nityananda Prabhu*).
-- `Subcategory`: Precise 2nd-level classification (e.g. *Verse 01: Ceto-Darpana-Marjanam*, *Canto 04: Prithu Maharaja & Pracetas*).
-- `Upload Date`: `YYYY-MM-DD` string.
-- `Duration`: Video duration (e.g. `1:24:30`).
-- `Channel`: Uploader / channel name.
-- `Source`: Origin label (e.g. `Channel (@hpdrgg - Videos)` or `Playlist (...)`).
-- `URL`: Canonical video watch URL.
 
 ---
 
@@ -83,55 +107,44 @@ Master chronological archive generated by scraping scripts, sorted from earliest
 
 ### 4.1 Incremental Scraper: [`scripts/fetch_lectures.py`](scripts/fetch_lectures.py)
 - **Purpose**: Runs a scheduled or manual scrape across all main channels and playlists into `data/combined_hpd_lectures.csv`.
-- **Deduplication & Resume**:
-  - Automatically loads existing records from `data/combined_hpd_lectures.csv` into a `seen_ids` set on startup.
-  - If a video ID is already in `seen_ids`, it is skipped instantly.
-  - Only fetches metadata for brand-new videos.
-  - Merges, sorts chronologically earliest to latest (with sequential part numbers aligned), and rewrites `data/combined_hpd_lectures.csv`.
 - **Command**:
   ```bash
   python3 scripts/fetch_lectures.py
   ```
 
-### 4.2 Universal Appender: [`scripts/append_playlist.py`](scripts/append_playlist.py)
-- **Purpose**: Ad-hoc tool to append any new YouTube playlist or channel to `data/combined_hpd_lectures.csv`.
-- **Deduplication**: Fast-checks all incoming IDs against `data/combined_hpd_lectures.csv` and only appends unseen videos.
+### 4.2 Web Builder: [`scripts/build_data.py`](scripts/build_data.py)
+- **Purpose**: Re-generates `data/lectures.json` and `data/lectures-data.js` from `data/combined_hpd_lectures.csv`.
 - **Command**:
   ```bash
-  python3 scripts/append_playlist.py "<playlist_or_channel_url>" "[optional_source_label]"
-  ```
-
-### 4.3 Web Builder: [`scripts/build_data.py`](scripts/build_data.py)
-- **Purpose**: Re-generates `data/lectures.json` and `data/lectures-data.js` from `data/combined_hpd_lectures.csv`. Automatically binds companion resources from `resources/` to relevant categories.
-- **Command**:
-  ```bash
+  npm run build:data
+  # or
   python3 scripts/build_data.py
   ```
 
-### 4.4 Shorts Scraper: [`scripts/fetch_shorts.py`](scripts/fetch_shorts.py)
-- **Purpose**: Scrapes and synchronizes the HG Hari Parshad Das Shorts playlist (`PLZ4N58AwlRQ4`) into `data/shorts.json` and `data/shorts-data.js`.
-- **Command**:
+### 4.3 Production Build & Verification
+- **Build**:
   ```bash
-  python3 scripts/fetch_shorts.py
+  npm run build
+  ```
+- **Local Dev Server**:
+  ```bash
+  npm run dev
   ```
 
 ---
 
-## 5. Web Application Frontend Guidelines
+## 5. UI/UX Standards
 
-### UI/UX Standards
-- **Alphabetical Sorting**: Dropdown filters for **Channel** and **Topic/Series** must always be sorted alphabetically (`A → Z`) using `a.localeCompare(b, undefined, { sensitivity: 'base' })`.
-- **Batch Rendering**: To maintain 60fps rendering across 500+ items, the DOM renders items in batches of 36 (`BATCH_SIZE`) with infinite scroll or a "Load More" trigger.
+- **Alphabetical Sorting**: Dropdown filters for **Channel**, **Speaker**, and **Topic/Series** must always be sorted alphabetically (`A → Z`) using `a.localeCompare(b, undefined, { sensitivity: 'base' })`.
+- **Batch Rendering**: Render items in batches of 36 (`BATCH_SIZE`) with infinite scroll or a "Load More" trigger.
 - **Theme Support**: CSS variables define palettes for `[data-theme="light"]` (default) and `[data-theme="dark"]`. The active theme persists in `localStorage` under `hpd_talks_theme_v1`.
-- **Player Modal**: YouTube iframe uses `enablejsapi=1&rel=0`. Modal supports keyboard controls (`Escape` to close).
+- **Bottom Player**: YouTube iframe uses `enablejsapi=1&rel=0`. Modal supports keyboard controls (`Escape` to close, `Space` to toggle play/pause, `ArrowLeft` / `ArrowRight` to seek).
 
 ---
 
 ## 6. Vercel Deployment Rules
 
-- **Framework**: `Other` (static site).
-- **Build Command**: None (leave empty).
-- **Output Directory**: None (serves root `./`).
-- **Clean URLs & Caching**: Managed by [`vercel.json`](vercel.json).
-  - Static CSS/JS cached for 24h.
-  - `data/lectures.json` cached with `stale-while-revalidate`.
+- **Framework**: `Next.js` (managed by [`vercel.json`](vercel.json)).
+- **Build Command**: `next build` (standard Next.js build).
+- **Output Directory**: `.next` (automatic).
+- **Clean URLs & Security**: Security headers (`X-Content-Type-Options`, `X-Frame-Options`, `X-XSS-Protection`) configured in `vercel.json`.

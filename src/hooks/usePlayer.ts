@@ -17,6 +17,7 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
   const [duration, setDuration] = useState(0);
   const [playbackRate, setPlaybackRate] = useState(1.0);
   const [isVideoExpanded, setIsVideoExpanded] = useState(true);
+  const [initialStartTime, setInitialStartTime] = useState(0);
 
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const isSeekingRef = useRef(false);
@@ -102,6 +103,7 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
       setActiveLecture(lecture);
       setIsVideoExpanded(showVideo);
       setIsPlaying(true);
+      setInitialStartTime(startTime);
 
       const parsedDur = parseDurationToSeconds(lecture.duration);
       setDuration(parsedDur);
@@ -182,6 +184,7 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay }: UsePlayerProps =
     duration,
     playbackRate,
     isVideoExpanded,
+    initialStartTime,
     iframeRef,
     isSeekingRef,
     play,

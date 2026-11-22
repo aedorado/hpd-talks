@@ -12,6 +12,7 @@ interface DockedBottomPlayerProps {
   duration: number;
   playbackRate: number;
   isVideoExpanded: boolean;
+  initialStartTime?: number;
   isHeard: boolean;
   isStarred: boolean;
   iframeRef: React.RefObject<HTMLIFrameElement | null>;
@@ -38,6 +39,7 @@ export const DockedBottomPlayer: React.FC<DockedBottomPlayerProps> = ({
   duration,
   playbackRate,
   isVideoExpanded,
+  initialStartTime = 0,
   isHeard,
   isStarred,
   iframeRef,
@@ -70,6 +72,7 @@ export const DockedBottomPlayer: React.FC<DockedBottomPlayerProps> = ({
       {/* Centered Expandable Video Dock attached directly above bottom player bar */}
       <VideoDock
         ytId={ytId}
+        startTime={initialStartTime}
         iframeRef={iframeRef}
         onSwitchToAudio={() => onSetVideoExpanded(false)}
       />

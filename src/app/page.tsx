@@ -79,6 +79,7 @@ export default function Home() {
     duration,
     playbackRate,
     isVideoExpanded,
+    initialStartTime,
     iframeRef,
     isSeekingRef,
     play,
@@ -393,6 +394,7 @@ export default function Home() {
         duration={duration}
         playbackRate={playbackRate}
         isVideoExpanded={isVideoExpanded}
+        initialStartTime={initialStartTime}
         isHeard={activeLecture ? heardSet.has(activeLecture.yt_id || activeLecture.id) : false}
         isStarred={activeLecture ? starredSet.has(activeLecture.yt_id || activeLecture.id) : false}
         iframeRef={iframeRef}

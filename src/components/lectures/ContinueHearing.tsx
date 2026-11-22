@@ -48,11 +48,11 @@ export const ContinueHearing: React.FC<ContinueHearingProps> = ({
   const badgeLabel = lecture.catalog_id || (lecture.index ? `HPD${lecture.index.toString().padStart(4, '0')}` : '');
 
   return (
-    <section className="continue-hearing-section" id="continueHearingSection" aria-label="Resume Sadhana">
-      <div className="continue-header">
-        <div className="continue-badge">
+    <section className="continue-hearing-card" id="continueHearingSection" aria-label="Resume Sadhana">
+      <div className="continue-hearing-header">
+        <div className="continue-hearing-badge">
           <span className="pulse-dot"></span>
-          <span>Continue Hearing</span>
+          <span>Resume Sadhana • Last Played</span>
         </div>
         <button
           className="continue-dismiss-btn"
@@ -64,7 +64,7 @@ export const ContinueHearing: React.FC<ContinueHearingProps> = ({
         </button>
       </div>
 
-      <div className="continue-card" id="continueHearingContent">
+      <div className="continue-hearing-content" id="continueHearingContent">
         <div
           className="continue-thumb-wrap"
           role="button"

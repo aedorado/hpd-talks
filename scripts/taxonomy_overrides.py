@@ -11,7 +11,7 @@ Contains curated overrides for:
 # Video IDs to completely exclude from the repository (e.g. non-HPD lectures scraped accidentally)
 IGNORED_VIDEO_IDS = {
     "-uabMD0KaUc",  # HPD0029: Personal family clip (~ Hari forces Papa to chant Harinam ~)
-    "-uabMD0KaUc",  # HPD0029: Personal family clip (~ Hari forces Papa to chant Harinam ~)
+    "08qo8DpgjLk",  # Sacinandana Swami, "Radha's Sidelong Glance of Mercy"
 }
 
 # YouTube Video ID -> Speaker Name

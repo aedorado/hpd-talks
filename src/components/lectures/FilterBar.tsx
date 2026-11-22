@@ -69,7 +69,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     activeSubcategory !== 'all' ||
     activeSpeaker !== 'all' ||
     activeChannel !== 'all' ||
-    activeSort !== 'default';
+    activeSort !== 'reverse';
 
   const showSubcategories = subcategories.length > 0 && activeCategory !== 'all';
   const showUpadeshamritaBanner = activeCategory === 'Upadeshamrta (Seminar)';
@@ -256,8 +256,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 value={activeSort}
                 onChange={(e) => onSortChange(e.target.value as SortOption)}
               >
-                <option value="default">Default Catalog (ID)</option>
-                <option value="reverse">Reverse (Latest First)</option>
+                <option value="reverse">Latest First (Default)</option>
+                <option value="default">Earliest First</option>
                 <option value="titleAsc">Title (A → Z)</option>
                 <option value="category">By Topic / Category</option>
               </select>

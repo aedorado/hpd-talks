@@ -18,7 +18,7 @@ export function useFilters({ lectures, heardSet, starredSet }: UseFiltersProps) 
   const [activeSubcategory, setActiveSubcategory] = useState('all');
   const [activeSpeaker, setActiveSpeaker] = useState('all');
   const [activeChannel, setActiveChannel] = useState('all');
-  const [activeSort, setActiveSort] = useState<SortOption>('default');
+  const [activeSort, setActiveSort] = useState<SortOption>('reverse');
   const [viewMode, setViewModeState] = useState<ViewMode>('list');
 
   // Load viewMode preference from localStorage
@@ -141,7 +141,7 @@ export function useFilters({ lectures, heardSet, starredSet }: UseFiltersProps) 
     setActiveSubcategory('all');
     setActiveSpeaker('all');
     setActiveChannel('all');
-    setActiveSort('default');
+    setActiveSort('reverse');
   }, []);
 
   return {

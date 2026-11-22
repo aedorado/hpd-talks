@@ -217,6 +217,10 @@ CATEGORY_OVERRIDES = {
         "Festivals & Temple Seva",
         "Bhishma Panchak Vishesh Katha (Nashik)",
     ),
+    "QS7w2vJb9XY": (
+        "Festivals & Temple Seva",
+        "Govardhana Puja & Annakuta",
+    ),
     "Im1LBGiKx5g": (
         "Q&A, Podcasts & Interviews",
         "Retreat & Seminar Q&A",

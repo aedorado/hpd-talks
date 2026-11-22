@@ -20,7 +20,7 @@
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Cinzel:wght@600;700&display=swap"
     rel="stylesheet">
 
-  <link rel="stylesheet" href="css/style.css?v=2.5.0">
+  <link rel="stylesheet" href="css/style.css?v=2.5.1">
 </head>
 
 <body>
@@ -42,7 +42,7 @@
         <div class="progress-pill" id="headerProgressWidget" title="Click to view listening stats">
           <div class="progress-meta">
             <span class="progress-label">Lectures Heard</span>
-            <span class="progress-fraction" id="heardFraction">0 / 702</span>
+            <span class="progress-fraction" id="heardFraction">0 / 703</span>
           </div>
           <div class="progress-bar-wrap">
             <div class="progress-bar-fill" id="progressBarFill" style="width: 0%;"></div>
@@ -109,7 +109,7 @@
       <button class="nav-mode-btn active" id="tabKathasBtn" data-mode="kathas" title="View Full Lectures Archive">
         <span class="nav-mode-icon">🎙️</span>
         <span class="nav-mode-text">Kathas</span>
-        <span class="nav-mode-count" id="navKathasCount">702</span>
+        <span class="nav-mode-count" id="navKathasCount">703</span>
       </button>
       <button class="nav-mode-btn" id="tabShortsBtn" data-mode="shorts" title="View Upadesh Shorts Archive">
         <span class="nav-mode-icon">⚡</span>
@@ -596,7 +596,8 @@
   </div>
 
   <!-- Docked Bottom Player Bar with Expandable Video Dock -->
-  <aside class="docked-bottom-player is-video-visible" id="dockedBottomPlayer" aria-label="Katha Player" style="display: none;">
+  <aside class="docked-bottom-player is-video-visible" id="dockedBottomPlayer" aria-label="Katha Player"
+    style="display: none;">
     <!-- Centered Expandable Video Dock attached directly above bottom player bar -->
     <div class="bp-video-dock" id="bpVideoDock">
       <div class="bp-video-header">
@@ -610,7 +611,8 @@
       </div>
       <div class="bp-video-frame-container">
         <iframe id="bpPlayerIframe" src="" title="Katha Player" frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowfullscreen></iframe>
       </div>
     </div>
 
@@ -686,7 +688,8 @@
           <span class="bp-toggle-chevron" id="bpToggleVideoChevron">∨</span>
         </button>
         <!-- External Direct Link -->
-        <a href="#" target="_blank" rel="noopener noreferrer" class="bp-tool-btn bp-yt-link" id="bpDirectYtLink" title="Watch on YouTube">
+        <a href="#" target="_blank" rel="noopener noreferrer" class="bp-tool-btn bp-yt-link" id="bpDirectYtLink"
+          title="Watch on YouTube">
           ↗
         </a>
         <!-- Close / Dismiss Player -->
@@ -702,10 +705,10 @@
   <!-- 0. YouTube IFrame Player API for timestamp & playback tracking -->
   <script src="https://www.youtube.com/iframe_api" async></script>
   <!-- 1. Offline & Local file fallback datasets -->
-  <script src="data/lectures-data.js?v=2.5.0"></script>
-  <script src="data/shorts-data.js?v=2.5.0"></script>
+  <script src="data/lectures-data.js?v=2.5.1"></script>
+  <script src="data/shorts-data.js?v=2.5.1"></script>
   <!-- 2. Application Logic -->
-  <script src="js/app.js?v=2.5.0"></script>
+  <script src="js/app.js?v=2.5.1"></script>
 </body>
 
 </html>

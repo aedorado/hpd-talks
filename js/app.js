@@ -914,18 +914,9 @@
     `;
 
     const thumbWrap = card.querySelector('.card-thumb-wrap');
-    if (thumbWrap) {
-      thumbWrap.addEventListener('click', () => {
-        playLecture(ytId, { showVideo: true });
-      });
-    }
-
-    const cardTitle = card.querySelector('.card-title');
-    if (cardTitle) {
-      cardTitle.addEventListener('click', () => {
-        playLecture(ytId, { showVideo: true });
-      });
-    }
+    thumbWrap.addEventListener('click', () => {
+      openPlayerModal(filteredIndex);
+    });
 
     const streamCardBtn = card.querySelector('.btn-stream-card');
     if (streamCardBtn) {
@@ -1260,7 +1251,7 @@
             event: 'command',
             func: 'getDuration'
           }), '*');
-        } catch (e) {}
+        } catch (e) { }
 
         if (ytPlayer && typeof ytPlayer.getCurrentTime === 'function') {
           try {
@@ -1271,7 +1262,7 @@
               const ytId = l.yt_id || l.id;
               savePlaybackProgress(ytId, curr, dur);
             }
-          } catch (e) {}
+          } catch (e) { }
         }
       }
     }, 2000);
@@ -1305,7 +1296,7 @@
           func: func,
           args: args
         }), '*');
-      } catch (e) {}
+      } catch (e) { }
     }
   }
 
@@ -1434,7 +1425,7 @@
     try {
       localStorage.setItem(STORAGE_KEYS.LAST_PLAYED, ytId);
       renderContinueHearingSection();
-    } catch (e) {}
+    } catch (e) { }
 
     history.replaceState(null, '', `#v=${ytId}`);
 
@@ -1546,7 +1537,7 @@
     closePlayer();
   }
 
-  function updateModalControls() {}
+  function updateModalControls() { }
 
   function updateBottomPlayerButtons() {
     if (!activePlayerYtId) return;
@@ -1585,8 +1576,9 @@
     const hash = window.location.hash;
     if (hash && hash.startsWith('#v=')) {
       const targetYtId = hash.replace('#v=', '').trim();
-      if (lectureMapByYtId.has(targetYtId)) {
-        setTimeout(() => playLecture(targetYtId, { showVideo: true }), 200);
+      const idx = filteredLectures.findIndex(l => (l.yt_id || l.id) === targetYtId);
+      if (idx !== -1) {
+        setTimeout(() => openPlayerModal(idx), 200);
       }
     } else if (hash && hash.startsWith('#s=')) {
       const targetShortId = hash.replace('#s=', '').trim();
@@ -2198,7 +2190,7 @@
       bpPlayerIframe.addEventListener('load', () => {
         try {
           bpPlayerIframe.contentWindow.postMessage('{"event":"listening"}', '*');
-        } catch (e) {}
+        } catch (e) { }
       });
     }
 
@@ -2334,7 +2326,7 @@
       ytPlayerIframe.addEventListener('load', () => {
         try {
           ytPlayerIframe.contentWindow.postMessage('{"event":"listening"}', '*');
-        } catch (e) {}
+        } catch (e) { }
       });
     }
 
@@ -2435,7 +2427,7 @@
           }
         });
       }
-    } catch (e) {}
+    } catch (e) { }
   };
 
   // ==========================================================================

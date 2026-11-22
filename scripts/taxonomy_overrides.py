@@ -221,6 +221,26 @@ CATEGORY_OVERRIDES = {
         "Gaudiya Vaishnava Vaishishtya (Seminar)",
         "Gaudiya Vaishnava Vaishishtya (2-Part Series)",
     ),
+    "ngIQl08iFgA": (
+        "Sharad Poornima (Seminar)",
+        "Sharad Shravanotsav 2026 (5-Part Seminar)",
+    ),
+    "0WJsbcMr9ZI": (
+        "Sharad Poornima (Seminar)",
+        "Sharad Shravanotsav 2026 (5-Part Seminar)",
+    ),
+    "g8PbxqazvoM": (
+        "Sharad Poornima (Seminar)",
+        "Sharad Shravanotsav 2026 (5-Part Seminar)",
+    ),
+    "ikof2Db-ebg": (
+        "Sharad Poornima (Seminar)",
+        "Sharad Shravanotsav 2026 (5-Part Seminar)",
+    ),
+    "4lefVOx-QA8": (
+        "Sharad Poornima (Seminar)",
+        "Sharad Shravanotsav 2026 (5-Part Seminar)",
+    ),
     "Im1LBGiKx5g": (
         "Q&A, Podcasts & Interviews",
         "Retreat & Seminar Q&A",

@@ -218,7 +218,7 @@ export default function Home() {
   }, [allLectures, play, showToast]);
 
   // Deep linking URL hash handler (#v= or #s=) - only runs on initial mount
-  const initialHashHandledRef = useRef(false);
+  const initialHashHandledRef = React.useRef(false);
 
   useEffect(() => {
     if (!sadhanaMounted || typeof window === 'undefined') return;

@@ -214,12 +214,12 @@ CATEGORY_OVERRIDES = {
         "Universality of Bhakti",
     ),
     "T0CQhwWQfng": (
-        "Festivals & Temple Seva",
-        "Bhishma Panchak Vishesh Katha (Nashik)",
+        "Gaudiya Vaishnava Vaishishtya (Seminar)",
+        "Gaudiya Vaishnava Vaishishtya (2-Part Series)",
     ),
     "QS7w2vJb9XY": (
-        "Festivals & Temple Seva",
-        "Govardhana Puja & Annakuta",
+        "Gaudiya Vaishnava Vaishishtya (Seminar)",
+        "Gaudiya Vaishnava Vaishishtya (2-Part Series)",
     ),
     "Im1LBGiKx5g": (
         "Q&A, Podcasts & Interviews",

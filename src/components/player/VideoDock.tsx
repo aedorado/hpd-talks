@@ -10,11 +10,15 @@ interface VideoDockProps {
 }
 
 export const VideoDock: React.FC<VideoDockProps> = ({ ytId, startTime = 0, iframeRef, onSwitchToAudio }) => {
-  // Reconstruct iframe src when ytId changes, including initial start time
+  // Reconstruct iframe src when ytId changes, including initial start time and origin
   const iframeSrc = useMemo(() => {
     if (!ytId) return '';
+    const originParam =
+      typeof window !== 'undefined' && window.location.origin
+        ? `&origin=${encodeURIComponent(window.location.origin)}`
+        : '';
     const startParam = startTime > 0 ? `&start=${Math.floor(startTime)}` : '';
-    return `https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1&rel=0${startParam}`;
+    return `https://www.youtube.com/embed/${ytId}?autoplay=1&enablejsapi=1&rel=0${originParam}${startParam}`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ytId]);
 

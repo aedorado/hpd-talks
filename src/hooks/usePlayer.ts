@@ -64,6 +64,41 @@ export function usePlayer({ onProgress, onLectureEnd, onPlay, getProgress }: Use
     }
   }, []);
 
+  // Send initial listening handshake to YouTube iframe
+  const sendHandshake = useCallback(() => {
+    if (iframeRef.current && iframeRef.current.contentWindow) {
+      try {
+        iframeRef.current.contentWindow.postMessage('{"event":"listening"}', '*');
+      } catch (e) {}
+    }
+  }, []);
+
+  // Establish postMessage handshake with YouTube iframe
+  useEffect(() => {
+    if (!activeLecture) return;
+    sendHandshake();
+    const t1 = setTimeout(sendHandshake, 300);
+    const t2 = setTimeout(sendHandshake, 800);
+    const t3 = setTimeout(sendHandshake, 1600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      clearTimeout(t3);
+    };
+  }, [activeLecture, sendHandshake]);
+
+  // Query playback time and duration every second while playing
+  useEffect(() => {
+    if (!activeLecture || !isPlaying) return;
+
+    const interval = setInterval(() => {
+      sendIframeCommand('getCurrentTime');
+      sendIframeCommand('getDuration');
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [activeLecture, isPlaying, sendIframeCommand]);
+
   // Listen to postMessage from YouTube iframe
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {

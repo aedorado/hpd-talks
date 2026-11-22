@@ -34,8 +34,7 @@ export const ContinueHearing: React.FC<ContinueHearingProps> = ({
   const hasProgress =
     progress &&
     progress.currentTime > 5 &&
-    (!progress.duration || progress.currentTime < progress.duration - 15) &&
-    !isHeard;
+    (!progress.duration || progress.currentTime < progress.duration - 15);
   const progTimeStr = hasProgress ? formatTime(progress.currentTime) : '';
   const progPercent =
     hasProgress && progress.duration

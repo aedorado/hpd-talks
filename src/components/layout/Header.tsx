@@ -114,7 +114,8 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             className="btn btn-icon"
             id="themeToggleBtn"
-            title="Toggle Light / Dark theme"
+            title={theme === 'dark' ? 'Switch to Light theme' : 'Switch to Dark theme'}
+            aria-label={theme === 'dark' ? 'Switch to Light theme' : 'Switch to Dark theme'}
             onClick={onToggleTheme}
           >
             <svg className="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

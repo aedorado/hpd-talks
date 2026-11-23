@@ -222,11 +222,19 @@ CATEGORY_OVERRIDES = {
     ),
     "T0CQhwWQfng": (
         "Gaudiya Vaishnava Vaishishtya (Seminar)",
-        "Gaudiya Vaishnava Vaishishtya (2-Part Series)",
+        "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
     ),
     "QS7w2vJb9XY": (
         "Gaudiya Vaishnava Vaishishtya (Seminar)",
-        "Gaudiya Vaishnava Vaishishtya (2-Part Series)",
+        "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
+    ),
+    "IJJ_6hHIiWc": (
+        "Gaudiya Vaishnava Vaishishtya (Seminar)",
+        "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
+    ),
+    "qGCaQ4rlcy0": (
+        "Gaudiya Vaishnava Vaishishtya (Seminar)",
+        "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
     ),
     "ngIQl08iFgA": (
         "Sharad Poornima (Seminar)",

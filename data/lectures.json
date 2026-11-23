@@ -11731,7 +11731,7 @@
     "index": 740,
     "title": "Gaudiya Vaishnava Vaishishtya - Part 1",
     "category": "Gaudiya Vaishnava Vaishishtya (Seminar)",
-    "subcategory": "Gaudiya Vaishnava Vaishishtya (2-Part Series)",
+    "subcategory": "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
     "upload_date": "2026-11-21",
     "duration": "2:04:55",
     "channel": "ISKCON Nashik",
@@ -11746,7 +11746,7 @@
     "index": 741,
     "title": "Gaudiya Vaishnava Vaishishtya - Part 2",
     "category": "Gaudiya Vaishnava Vaishishtya (Seminar)",
-    "subcategory": "Gaudiya Vaishnava Vaishishtya (2-Part Series)",
+    "subcategory": "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
     "upload_date": "2026-11-22",
     "duration": "2:10:47",
     "channel": "ISKCON Nashik",
@@ -11767,5 +11767,35 @@
     "channel": "Bhakti Sanga Japa",
     "url": "https://www.youtube.com/watch?v=4FiCekW1b64",
     "thumbnail": "https://img.youtube.com/vi/4FiCekW1b64/mqdefault.jpg"
+  },
+  {
+    "id": "IJJ_6hHIiWc",
+    "yt_id": "IJJ_6hHIiWc",
+    "catalog_id": "HPD0743",
+    "speaker": "HG Hari Parshad Das",
+    "index": 743,
+    "title": "Gaudiya Vaishnava Vaishishtya - Part 3",
+    "category": "Gaudiya Vaishnava Vaishishtya (Seminar)",
+    "subcategory": "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
+    "upload_date": "2026-11-22",
+    "duration": "2:18:14",
+    "channel": "ISKCON Nashik",
+    "url": "https://www.youtube.com/watch?v=IJJ_6hHIiWc",
+    "thumbnail": "https://img.youtube.com/vi/IJJ_6hHIiWc/mqdefault.jpg"
+  },
+  {
+    "id": "qGCaQ4rlcy0",
+    "yt_id": "qGCaQ4rlcy0",
+    "catalog_id": "HPD0744",
+    "speaker": "HG Hari Parshad Das",
+    "index": 744,
+    "title": "Gaudiya Vaishnava Vaishishtya - Part 4",
+    "category": "Gaudiya Vaishnava Vaishishtya (Seminar)",
+    "subcategory": "Gaudiya Vaishnava Vaishishtya (4-Part Series)",
+    "upload_date": "2026-11-23",
+    "duration": "2:04:55",
+    "channel": "ISKCON Nashik",
+    "url": "https://www.youtube.com/watch?v=qGCaQ4rlcy0",
+    "thumbnail": "https://img.youtube.com/vi/qGCaQ4rlcy0/mqdefault.jpg"
   }
 ]
